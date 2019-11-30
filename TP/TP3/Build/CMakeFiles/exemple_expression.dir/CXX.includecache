@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../expressions/constante.hh
+expression.hh
+../expressions/expression.hh
+
+../expressions/contexte.hh
+string
+-
+map
+-
+
+../expressions/expression.hh
+memory
+-
+contexte.hh
+../expressions/contexte.hh
+
+../expressions/expressionBinaire.hh
+expression.hh
+../expressions/expression.hh
+
+../expressions/variable.hh
+string
+-
+expression.hh
+../expressions/expression.hh
+
+/home/melon/University/S5/TLC/TP/TP3/exemple_expression/main.cc
+contexte.hh
+/home/melon/University/S5/TLC/TP/TP3/exemple_expression/contexte.hh
+expressionBinaire.hh
+/home/melon/University/S5/TLC/TP/TP3/exemple_expression/expressionBinaire.hh
+constante.hh
+/home/melon/University/S5/TLC/TP/TP3/exemple_expression/constante.hh
+variable.hh
+/home/melon/University/S5/TLC/TP/TP3/exemple_expression/variable.hh
+iostream
+-
+

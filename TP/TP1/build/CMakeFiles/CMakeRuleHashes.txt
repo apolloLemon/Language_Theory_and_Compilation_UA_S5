@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+501d8c5f5e92545e57d106b8d45c722e scanner.cpp

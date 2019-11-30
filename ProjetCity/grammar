@@ -1,0 +1,27 @@
+PROG		->		DEC_CONSTR FONCTIONS
+
+FONCTIONS 	->		FONCTION FONCTIONS
+			|		epsilon
+
+
+DEC_CONSTR 	->		Construire RAYON { INSTRS }
+
+RAYON		->		( ENTIER )
+			|		epsilon
+
+
+INSTRS->			INSTRUCTION INSTRS
+			|		epsilon
+
+INSTRUCTION	->		DEC_MAISON
+			|		DEC_ROUTE
+			|		DEPLACEMENT
+			|		POSITION
+			|		TOURNER
+			|		ORIENTER
+			|		ORIENTATION
+			|		COLORISER
+			|		COULEUR
+			|		VOISIN
+			|		VOISINAGE
+

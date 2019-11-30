@@ -1,0 +1,373 @@
+Grammaire
+
+    0 $accept: prg $end
+
+    1 $@1: %empty
+
+    2 prg: exp NL $@1 prg
+    3    | END NL
+
+    4 exp: nombre
+    5    | exp '+' exp
+    6    | exp '-' exp
+    7    | exp '*' exp
+    8    | exp '/' exp
+    9    | '-' exp
+   10    | '(' exp ')'
+   11    | IDENT '=' exp
+
+   12 nombre: REAL
+   13       | NUMBER
+   14       | IDENT
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+$end (0) 0
+'(' (40) 10
+')' (41) 10
+'*' (42) 7
+'+' (43) 5
+'-' (45) 6 9
+'/' (47) 8
+'=' (61) 11
+error (256)
+NL (258) 2 3
+END (259) 3
+NUMBER <int> (260) 13
+REAL <float> (261) 12
+IDENT <std::string> (262) 11 14
+NEG (263)
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+$accept (16)
+    à gauche: 0
+prg (17)
+    à gauche: 2 3, à droite: 0 2
+$@1 (18)
+    à gauche: 1, à droite: 2
+exp <float> (19)
+    à gauche: 4 5 6 7 8 9 10 11, à droite: 2 5 6 7 8 9 10 11
+nombre <float> (20)
+    à gauche: 12 13 14, à droite: 4
+
+
+État 0
+
+    0 $accept: . prg $end
+
+    END     décalage et aller à l'état 1
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    prg     aller à l'état 7
+    exp     aller à l'état 8
+    nombre  aller à l'état 9
+
+
+État 1
+
+    3 prg: END . NL
+
+    NL  décalage et aller à l'état 10
+
+
+État 2
+
+   13 nombre: NUMBER .
+
+    $défaut  réduction par utilisation de la règle 13 (nombre)
+
+
+État 3
+
+   12 nombre: REAL .
+
+    $défaut  réduction par utilisation de la règle 12 (nombre)
+
+
+État 4
+
+   11 exp: IDENT . '=' exp
+   14 nombre: IDENT .
+
+    '='  décalage et aller à l'état 11
+
+    $défaut  réduction par utilisation de la règle 14 (nombre)
+
+
+État 5
+
+    9 exp: '-' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 12
+    nombre  aller à l'état 9
+
+
+État 6
+
+   10 exp: '(' . exp ')'
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 13
+    nombre  aller à l'état 9
+
+
+État 7
+
+    0 $accept: prg . $end
+
+    $end  décalage et aller à l'état 14
+
+
+État 8
+
+    2 prg: exp . NL $@1 prg
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+
+    NL   décalage et aller à l'état 15
+    '+'  décalage et aller à l'état 16
+    '-'  décalage et aller à l'état 17
+    '*'  décalage et aller à l'état 18
+    '/'  décalage et aller à l'état 19
+
+
+État 9
+
+    4 exp: nombre .
+
+    $défaut  réduction par utilisation de la règle 4 (exp)
+
+
+État 10
+
+    3 prg: END NL .
+
+    $défaut  réduction par utilisation de la règle 3 (prg)
+
+
+État 11
+
+   11 exp: IDENT '=' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 20
+    nombre  aller à l'état 9
+
+
+État 12
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+    9    | '-' exp .
+
+    $défaut  réduction par utilisation de la règle 9 (exp)
+
+
+État 13
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+   10    | '(' exp . ')'
+
+    '+'  décalage et aller à l'état 16
+    '-'  décalage et aller à l'état 17
+    '*'  décalage et aller à l'état 18
+    '/'  décalage et aller à l'état 19
+    ')'  décalage et aller à l'état 21
+
+
+État 14
+
+    0 $accept: prg $end .
+
+    $défaut  accepter
+
+
+État 15
+
+    2 prg: exp NL . $@1 prg
+
+    $défaut  réduction par utilisation de la règle 1 ($@1)
+
+    $@1  aller à l'état 22
+
+
+État 16
+
+    5 exp: exp '+' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 23
+    nombre  aller à l'état 9
+
+
+État 17
+
+    6 exp: exp '-' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 24
+    nombre  aller à l'état 9
+
+
+État 18
+
+    7 exp: exp '*' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 25
+    nombre  aller à l'état 9
+
+
+État 19
+
+    8 exp: exp '/' . exp
+
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    exp     aller à l'état 26
+    nombre  aller à l'état 9
+
+
+État 20
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+   11    | IDENT '=' exp .
+
+    '+'  décalage et aller à l'état 16
+    '-'  décalage et aller à l'état 17
+    '*'  décalage et aller à l'état 18
+    '/'  décalage et aller à l'état 19
+
+    $défaut  réduction par utilisation de la règle 11 (exp)
+
+
+État 21
+
+   10 exp: '(' exp ')' .
+
+    $défaut  réduction par utilisation de la règle 10 (exp)
+
+
+État 22
+
+    2 prg: exp NL $@1 . prg
+
+    END     décalage et aller à l'état 1
+    NUMBER  décalage et aller à l'état 2
+    REAL    décalage et aller à l'état 3
+    IDENT   décalage et aller à l'état 4
+    '-'     décalage et aller à l'état 5
+    '('     décalage et aller à l'état 6
+
+    prg     aller à l'état 27
+    exp     aller à l'état 8
+    nombre  aller à l'état 9
+
+
+État 23
+
+    5 exp: exp . '+' exp
+    5    | exp '+' exp .
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+
+    '*'  décalage et aller à l'état 18
+    '/'  décalage et aller à l'état 19
+
+    $défaut  réduction par utilisation de la règle 5 (exp)
+
+
+État 24
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    6    | exp '-' exp .
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+
+    '*'  décalage et aller à l'état 18
+    '/'  décalage et aller à l'état 19
+
+    $défaut  réduction par utilisation de la règle 6 (exp)
+
+
+État 25
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    7    | exp '*' exp .
+    8    | exp . '/' exp
+
+    $défaut  réduction par utilisation de la règle 7 (exp)
+
+
+État 26
+
+    5 exp: exp . '+' exp
+    6    | exp . '-' exp
+    7    | exp . '*' exp
+    8    | exp . '/' exp
+    8    | exp '/' exp .
+
+    $défaut  réduction par utilisation de la règle 8 (exp)
+
+
+État 27
+
+    2 prg: exp NL $@1 prg .
+
+    $défaut  réduction par utilisation de la règle 2 (prg)

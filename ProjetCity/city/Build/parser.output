@@ -1,0 +1,286 @@
+Grammar
+
+    0 $accept: programme $end
+
+    1 programme: instruction NL programme
+    2          | END NL
+
+    3 instruction: operation
+
+    4 operation: NUMBER
+    5          | '(' operation ')'
+    6          | operation '+' operation
+    7          | operation '-' operation
+    8          | operation '*' operation
+    9          | operation '/' operation
+   10          | '-' operation
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 5
+')' (41) 5
+'*' (42) 8
+'+' (43) 6
+'-' (45) 7 10
+'/' (47) 9
+error (256)
+NL (258) 1 2
+END (259) 2
+NUMBER <int> (260) 4
+NEG (261)
+
+
+Nonterminals, with rules where they appear
+
+$accept (13)
+    on left: 0
+programme (14)
+    on left: 1 2, on right: 0 1
+instruction (15)
+    on left: 3, on right: 1
+operation <int> (16)
+    on left: 4 5 6 7 8 9 10, on right: 3 5 6 7 8 9 10
+
+
+State 0
+
+    0 $accept: . programme $end
+
+    END     shift, and go to state 1
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    programme    go to state 5
+    instruction  go to state 6
+    operation    go to state 7
+
+
+State 1
+
+    2 programme: END . NL
+
+    NL  shift, and go to state 8
+
+
+State 2
+
+    4 operation: NUMBER .
+
+    $default  reduce using rule 4 (operation)
+
+
+State 3
+
+   10 operation: '-' . operation
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 9
+
+
+State 4
+
+    5 operation: '(' . operation ')'
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 10
+
+
+State 5
+
+    0 $accept: programme . $end
+
+    $end  shift, and go to state 11
+
+
+State 6
+
+    1 programme: instruction . NL programme
+
+    NL  shift, and go to state 12
+
+
+State 7
+
+    3 instruction: operation .
+    6 operation: operation . '+' operation
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+
+    '-'  shift, and go to state 13
+    '+'  shift, and go to state 14
+    '*'  shift, and go to state 15
+    '/'  shift, and go to state 16
+
+    $default  reduce using rule 3 (instruction)
+
+
+State 8
+
+    2 programme: END NL .
+
+    $default  reduce using rule 2 (programme)
+
+
+State 9
+
+    6 operation: operation . '+' operation
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+   10          | '-' operation .
+
+    $default  reduce using rule 10 (operation)
+
+
+State 10
+
+    5 operation: '(' operation . ')'
+    6          | operation . '+' operation
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+
+    '-'  shift, and go to state 13
+    '+'  shift, and go to state 14
+    '*'  shift, and go to state 15
+    '/'  shift, and go to state 16
+    ')'  shift, and go to state 17
+
+
+State 11
+
+    0 $accept: programme $end .
+
+    $default  accept
+
+
+State 12
+
+    1 programme: instruction NL . programme
+
+    END     shift, and go to state 1
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    programme    go to state 18
+    instruction  go to state 6
+    operation    go to state 7
+
+
+State 13
+
+    7 operation: operation '-' . operation
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 19
+
+
+State 14
+
+    6 operation: operation '+' . operation
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 20
+
+
+State 15
+
+    8 operation: operation '*' . operation
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 21
+
+
+State 16
+
+    9 operation: operation '/' . operation
+
+    NUMBER  shift, and go to state 2
+    '-'     shift, and go to state 3
+    '('     shift, and go to state 4
+
+    operation  go to state 22
+
+
+State 17
+
+    5 operation: '(' operation ')' .
+
+    $default  reduce using rule 5 (operation)
+
+
+State 18
+
+    1 programme: instruction NL programme .
+
+    $default  reduce using rule 1 (programme)
+
+
+State 19
+
+    6 operation: operation . '+' operation
+    7          | operation . '-' operation
+    7          | operation '-' operation .
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+
+    '*'  shift, and go to state 15
+    '/'  shift, and go to state 16
+
+    $default  reduce using rule 7 (operation)
+
+
+State 20
+
+    6 operation: operation . '+' operation
+    6          | operation '+' operation .
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+
+    '*'  shift, and go to state 15
+    '/'  shift, and go to state 16
+
+    $default  reduce using rule 6 (operation)
+
+
+State 21
+
+    6 operation: operation . '+' operation
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    8          | operation '*' operation .
+    9          | operation . '/' operation
+
+    $default  reduce using rule 8 (operation)
+
+
+State 22
+
+    6 operation: operation . '+' operation
+    7          | operation . '-' operation
+    8          | operation . '*' operation
+    9          | operation . '/' operation
+    9          | operation '/' operation .
+
+    $default  reduce using rule 9 (operation)

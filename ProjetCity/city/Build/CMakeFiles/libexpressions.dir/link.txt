@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblibexpressions.a  CMakeFiles/libexpressions.dir/expressions/contexte.cc.o CMakeFiles/libexpressions.dir/expressions/expressionBinaire.cc.o CMakeFiles/libexpressions.dir/expressions/expressionUnaire.cc.o CMakeFiles/libexpressions.dir/expressions/constante.cc.o CMakeFiles/libexpressions.dir/expressions/variable.cc.o
+/usr/bin/ranlib liblibexpressions.a
