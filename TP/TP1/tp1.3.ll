@@ -4,22 +4,20 @@
 %}
 %option c++
 %option yyclass="Scanner"
-%option cnoyywrap
+%option noyywrap
 
 entier [0-9]+
 decimal (,[0-9]+)?
 nombre {entier}{decimal}
 
-chaine (\"([^")|\\\")*\")
+keyword "begin"|"end"
+ 
 
 %%
 
-{chaine} 	{
-	std::cout<<"String detected : " <<YYText() <<" de longeur " << YYLeng()-2 << std::end;
-}
 
-begin|end	{
-	std::count << "Keywords : " << YYText() << std::endl;
+{keyword}	{
+	std::cout << "Keywords : " << YYText() << std::endl;
 }
 
 {nombre}	{
@@ -32,6 +30,10 @@ begin|end	{
 
 [+\-/\*]|(\*\*)   {
     std::cout << "Operateur : " << YYText() << std::endl;
+}
+
+(\"([a-zA-Z0-9]|[ \'.,;:])*\") 	{ //tp1.4
+    std::cout<<"String detected : " <<YYText() <<" de longeur " << YYLeng()-2 << std::endl;
 }
 
 .           {

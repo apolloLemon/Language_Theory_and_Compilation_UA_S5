@@ -10,7 +10,7 @@ endif()
 
 find_package(FLEX)
 
-FLEX_TARGET(scanner tp1.1.ll  ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
+FLEX_TARGET(scanner tp1.4.ll  ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
 
 include_directories(. ${CMAKE_CURRENT_BINARY_DIR})
 

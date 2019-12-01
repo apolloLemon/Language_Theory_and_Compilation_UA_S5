@@ -1,14 +1,10 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
 #IncludeRegexComplain: ^$
 
 #IncludeRegexTransform: 
-
-.././scanner.hh
-FlexLexer.h
--
 
 /home/melon/University/S5/TLC/TP/TP1/build/scanner.cpp
 inttypes.h
@@ -25,8 +21,12 @@ cstring
 -
 FlexLexer.h
 -
-scanner.hh
-/home/melon/University/S5/TLC/TP/TP1/build/scanner.hh
+../scanner.hh
+/home/melon/University/S5/TLC/TP/TP1/scanner.hh
 unistd.h
+-
+
+/home/melon/University/S5/TLC/TP/TP1/scanner.hh
+FlexLexer.h
 -
 
