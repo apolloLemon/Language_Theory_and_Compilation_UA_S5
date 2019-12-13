@@ -10,6 +10,7 @@
 
 %code requires{
     #include "contexte.hh"
+    #include "expressionUnaire.hh"
     #include "expressionBinaire.hh"
     #include "expression.hh"
     #include "constante.hh"
@@ -78,7 +79,8 @@
 
 
 %type <int>             expression NODE
-%type <int>			COORD
+%type <ExpressionPtr>   operation
+%type <int>				COORD
 %left '-' '+'
 %left '*' '/'
 %precedence  NEG
@@ -184,32 +186,40 @@ SINON:
 	Sinon '{' STATEMENTS '}' {} |
 	%empty
 
-
-
 expression:
-    num {
-        $$ = $1;
-    }|
-    id_var {
-
+    operation {
+        try {
+            double val = $1->calculer(driver.getContexte());
+            std::cout << "#-> " << val << std::endl;
+        } catch(const std::exception& err) {
+            std::cerr << "#-> " << err.what() << std::endl;
+        }
     }
-    | '(' expression ')' {
+
+operation:
+    num {
+        $$ = std::make_shared<Constante>($1);
+    }
+    | id_var {
+        $$ = std::make_shared<Variable>($1);
+    }
+    | '(' operation ')' {
         $$ = $2;
     }
-    | expression '+' expression {
-        $$ = $1 + $3;
+    | operation '+' operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::plus);
     }
-    | expression '-' expression {
-        $$ = $1 - $3;
+    | operation '-' operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::moins);
     }
-    | expression '*' expression {
-        $$ = $1 * $3;
+    | operation '*' operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::multiplie);
     }
-    | expression '/' expression {
-        $$ = $1 / $3;
+    | operation '/' operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::divise);
     }
-    | '-' expression %prec NEG {
-        $$ = - $2;
+    | '-' operation %prec NEG {
+        $$ = std::make_shared<ExpressionUnaire>($2, OperateurUnaire::neg);
     }
 
 %%
