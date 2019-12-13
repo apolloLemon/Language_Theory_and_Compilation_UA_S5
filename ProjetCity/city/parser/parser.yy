@@ -168,7 +168,15 @@ HORAIRE:
 
 
 VAR: 
-	id_var '=' expression {}
+	id_var '=' operation {
+		try {
+            double val = $3->calculer(driver.getContexte());
+            driver.setVariable($1, val);
+            std::cout << "#-> " << $1 << " = " << val << std::endl;
+        } catch(const std::exception& err) {
+            std::cerr << "#-> " << err.what() << std::endl;
+        }
+	}
 
 KEVIN:
 	Coloriser NODE COLOR {} |
@@ -188,12 +196,7 @@ SINON:
 
 expression:
     operation {
-        try {
-            double val = $1->calculer(driver.getContexte());
-            std::cout << "#-> " << val << std::endl;
-        } catch(const std::exception& err) {
-            std::cerr << "#-> " << err.what() << std::endl;
-        }
+        $$ = $1->calculer(driver.getContexte());
     }
 
 operation:
