@@ -9,6 +9,7 @@ double ExpressionUnaire::calculer(const Contexte& contexte) const {
     double exp = _exp->calculer(contexte);
     switch (_op) {
         case OperateurUnaire::neg: return -exp;
+        case OperateurUnaire::lneg: return not exp;
         default: return 0;
     }
 }

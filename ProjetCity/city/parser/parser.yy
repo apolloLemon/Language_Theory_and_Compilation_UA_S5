@@ -42,36 +42,26 @@
 %token                  END
 
 %token <double> 		num
-%token <std::string> 	id_maison
-%token <std::string> 	id_var
+%token <std::string> 	id_maison id_var
 %token <std::string> 	hex_RGB
 
 %token                  Construire
 %token					Detruire
-%token                  Maison
-%token                  maison
-%token                  Route
-%token					arrow
+%token                  Maison maison
+%token                  Route arrow
 %token                  Tourner horaire
 %token                  Orienter Orientation
 %token                  Deplacer Position
-%token                  Voisinage
-%token                  Voisin
-%token                  Coloriser
-%token                  Couleur
+%token                  Voisinage Voisin
+%token                  Coloriser Couleur
 
-%token                  Si
-%token                  Sinon
-%token                  Tant
-%token                  que
-%token                  Repeter
-%token                  fois
+%token                  Si Sinon
+%token                  Tant que
+%token                  Repeter fois
 %token					Pour
 
-%token					eq
-%token					ne
-%token					inf
-%token					sup
+%token					eq ne
+%token					inf sup
 
 %token 					degree
 
@@ -81,8 +71,8 @@
 %type <int>             expression NODE
 %type <ExpressionPtr>   operation
 %type <int>				COORD
-%left '-' '+'
-%left '*' '/'
+%left '-' '+' eq ne
+%left '*' '/' inf sup
 %precedence  NEG
 
 %%
@@ -170,7 +160,7 @@ HORAIRE:
 VAR: 
 	id_var '=' operation {
 		try {
-            double val = $3->calculer(driver.getContexte());
+			double val = $3->calculer(driver.getContexte());
             driver.setVariable($1, val);
             std::cout << "#-> " << $1 << " = " << val << std::endl;
         } catch(const std::exception& err) {
@@ -223,8 +213,24 @@ operation:
     }
     | '-' operation %prec NEG {
         $$ = std::make_shared<ExpressionUnaire>($2, OperateurUnaire::neg);
-    }
+    } |
 
+
+    operation eq operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::egal);
+    } |
+    operation ne operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::negal);
+    } |
+    operation inf operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::inf);
+    } |
+    operation sup operation {
+        $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::sup);
+    } |
+    '!' operation %prec NEG {
+        $$ = std::make_shared<ExpressionUnaire>($2, OperateurUnaire::lneg);
+    }
 %%
 
 void yy::Parser::error( const location_type &l, const std::string & err_msg) {

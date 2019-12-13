@@ -5,7 +5,11 @@ enum class OperateurBinaire {
     plus,
     moins,
     divise,
-    multiplie
+    multiplie,
+    egal,
+    negal,
+    inf,
+    sup
 };
 
 class ExpressionBinaire : public Expression {

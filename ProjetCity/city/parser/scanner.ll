@@ -45,6 +45,8 @@ fin return token::END;
 "<" return token::inf;
 ">" return token::sup;
 
+"not" return '!';
+"!" return '!';
 
 "->" return token::arrow;
 "°" return token::degree;
