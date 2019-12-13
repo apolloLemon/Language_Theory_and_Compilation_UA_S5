@@ -48,14 +48,18 @@
 
     #include "contexte.hh"
     #include "expressionBinaire.hh"
-    #include "expressionUnaire.hh"
+    #include "expression.hh"
     #include "constante.hh"
     #include "variable.hh"
 
     class Scanner;
     class Driver;
 
-#line 59 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
+
+
+
+
+#line 63 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -171,7 +175,7 @@
 
 
 namespace yy {
-#line 175 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
+#line 179 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
 
 
 
@@ -374,9 +378,18 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // NUMBER
-      // operation
-      char dummy1[sizeof (int)];
+      // num
+      char dummy1[sizeof (double)];
+
+      // COORD
+      // NODE
+      // expression
+      char dummy2[sizeof (int)];
+
+      // id_maison
+      // id_var
+      // hex_RGB
+      char dummy3[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -426,8 +439,40 @@ namespace yy {
       {
         NL = 258,
         END = 259,
-        NUMBER = 260,
-        NEG = 261
+        num = 260,
+        id_maison = 261,
+        id_var = 262,
+        hex_RGB = 263,
+        Construire = 264,
+        Detruire = 265,
+        Maison = 266,
+        maison = 267,
+        Route = 268,
+        arrow = 269,
+        Tourner = 270,
+        horaire = 271,
+        Orienter = 272,
+        Orientation = 273,
+        Deplacer = 274,
+        Position = 275,
+        Voisinage = 276,
+        Voisin = 277,
+        Coloriser = 278,
+        Couleur = 279,
+        Si = 280,
+        Sinon = 281,
+        Tant = 282,
+        que = 283,
+        Repeter = 284,
+        fois = 285,
+        Pour = 286,
+        eq = 287,
+        ne = 288,
+        inf = 289,
+        sup = 290,
+        degree = 291,
+        f_void = 292,
+        NEG = 293
       };
     };
 
@@ -482,6 +527,19 @@ namespace yy {
       {}
 #endif
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, double&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const double& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, int&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -489,6 +547,19 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const int& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -517,9 +588,20 @@ namespace yy {
         // Type destructor.
 switch (yytype)
     {
-      case 5: // NUMBER
-      case 16: // operation
+      case 5: // num
+        value.template destroy< double > ();
+        break;
+
+      case 58: // COORD
+      case 59: // NODE
+      case 71: // expression
         value.template destroy< int > ();
+        break;
+
+      case 6: // id_maison
+      case 7: // id_var
+      case 8: // hex_RGB
+        value.template destroy< std::string > ();
         break;
 
       default:
@@ -601,26 +683,39 @@ switch (yytype)
       symbol_type (int tok, location_type l)
         : super_type(token_type (tok), std::move (l))
       {
-        YYASSERT (tok == 0 || tok == token::NL || tok == token::END || tok == 45 || tok == 43 || tok == 42 || tok == 47 || tok == token::NEG || tok == 40 || tok == 41);
+        YYASSERT (tok == 0 || tok == token::NL || tok == token::END || tok == token::Construire || tok == token::Detruire || tok == token::Maison || tok == token::maison || tok == token::Route || tok == token::arrow || tok == token::Tourner || tok == token::horaire || tok == token::Orienter || tok == token::Orientation || tok == token::Deplacer || tok == token::Position || tok == token::Voisinage || tok == token::Voisin || tok == token::Coloriser || tok == token::Couleur || tok == token::Si || tok == token::Sinon || tok == token::Tant || tok == token::que || tok == token::Repeter || tok == token::fois || tok == token::Pour || tok == token::eq || tok == token::ne || tok == token::inf || tok == token::sup || tok == token::degree || tok == token::f_void || tok == 45 || tok == 43 || tok == 42 || tok == 47 || tok == token::NEG || tok == 123 || tok == 125 || tok == 40 || tok == 41 || tok == 44 || tok == 91 || tok == 93 || tok == 33 || tok == 61);
       }
 #else
       symbol_type (int tok, const location_type& l)
         : super_type(token_type (tok), l)
       {
-        YYASSERT (tok == 0 || tok == token::NL || tok == token::END || tok == 45 || tok == 43 || tok == 42 || tok == 47 || tok == token::NEG || tok == 40 || tok == 41);
+        YYASSERT (tok == 0 || tok == token::NL || tok == token::END || tok == token::Construire || tok == token::Detruire || tok == token::Maison || tok == token::maison || tok == token::Route || tok == token::arrow || tok == token::Tourner || tok == token::horaire || tok == token::Orienter || tok == token::Orientation || tok == token::Deplacer || tok == token::Position || tok == token::Voisinage || tok == token::Voisin || tok == token::Coloriser || tok == token::Couleur || tok == token::Si || tok == token::Sinon || tok == token::Tant || tok == token::que || tok == token::Repeter || tok == token::fois || tok == token::Pour || tok == token::eq || tok == token::ne || tok == token::inf || tok == token::sup || tok == token::degree || tok == token::f_void || tok == 45 || tok == 43 || tok == 42 || tok == 47 || tok == token::NEG || tok == 123 || tok == 125 || tok == 40 || tok == 41 || tok == 44 || tok == 91 || tok == 93 || tok == 33 || tok == 61);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, int v, location_type l)
+      symbol_type (int tok, double v, location_type l)
         : super_type(token_type (tok), std::move (v), std::move (l))
       {
-        YYASSERT (tok == token::NUMBER);
+        YYASSERT (tok == token::num);
       }
 #else
-      symbol_type (int tok, const int& v, const location_type& l)
+      symbol_type (int tok, const double& v, const location_type& l)
         : super_type(token_type (tok), v, l)
       {
-        YYASSERT (tok == token::NUMBER);
+        YYASSERT (tok == token::num);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, std::string v, location_type l)
+        : super_type(token_type (tok), std::move (v), std::move (l))
+      {
+        YYASSERT (tok == token::id_maison || tok == token::id_var || tok == token::hex_RGB);
+      }
+#else
+      symbol_type (int tok, const std::string& v, const location_type& l)
+        : super_type(token_type (tok), v, l)
+      {
+        YYASSERT (tok == token::id_maison || tok == token::id_var || tok == token::hex_RGB);
       }
 #endif
     };
@@ -693,16 +788,496 @@ switch (yytype)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NUMBER (int v, location_type l)
+      make_num (double v, location_type l)
       {
-        return symbol_type (token::NUMBER, std::move (v), std::move (l));
+        return symbol_type (token::num, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_NUMBER (const int& v, const location_type& l)
+      make_num (const double& v, const location_type& l)
       {
-        return symbol_type (token::NUMBER, v, l);
+        return symbol_type (token::num, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_id_maison (std::string v, location_type l)
+      {
+        return symbol_type (token::id_maison, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_id_maison (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::id_maison, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_id_var (std::string v, location_type l)
+      {
+        return symbol_type (token::id_var, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_id_var (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::id_var, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_hex_RGB (std::string v, location_type l)
+      {
+        return symbol_type (token::hex_RGB, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_hex_RGB (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::hex_RGB, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Construire (location_type l)
+      {
+        return symbol_type (token::Construire, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Construire (const location_type& l)
+      {
+        return symbol_type (token::Construire, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Detruire (location_type l)
+      {
+        return symbol_type (token::Detruire, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Detruire (const location_type& l)
+      {
+        return symbol_type (token::Detruire, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Maison (location_type l)
+      {
+        return symbol_type (token::Maison, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Maison (const location_type& l)
+      {
+        return symbol_type (token::Maison, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_maison (location_type l)
+      {
+        return symbol_type (token::maison, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_maison (const location_type& l)
+      {
+        return symbol_type (token::maison, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Route (location_type l)
+      {
+        return symbol_type (token::Route, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Route (const location_type& l)
+      {
+        return symbol_type (token::Route, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_arrow (location_type l)
+      {
+        return symbol_type (token::arrow, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_arrow (const location_type& l)
+      {
+        return symbol_type (token::arrow, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Tourner (location_type l)
+      {
+        return symbol_type (token::Tourner, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Tourner (const location_type& l)
+      {
+        return symbol_type (token::Tourner, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_horaire (location_type l)
+      {
+        return symbol_type (token::horaire, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_horaire (const location_type& l)
+      {
+        return symbol_type (token::horaire, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Orienter (location_type l)
+      {
+        return symbol_type (token::Orienter, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Orienter (const location_type& l)
+      {
+        return symbol_type (token::Orienter, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Orientation (location_type l)
+      {
+        return symbol_type (token::Orientation, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Orientation (const location_type& l)
+      {
+        return symbol_type (token::Orientation, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Deplacer (location_type l)
+      {
+        return symbol_type (token::Deplacer, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Deplacer (const location_type& l)
+      {
+        return symbol_type (token::Deplacer, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Position (location_type l)
+      {
+        return symbol_type (token::Position, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Position (const location_type& l)
+      {
+        return symbol_type (token::Position, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Voisinage (location_type l)
+      {
+        return symbol_type (token::Voisinage, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Voisinage (const location_type& l)
+      {
+        return symbol_type (token::Voisinage, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Voisin (location_type l)
+      {
+        return symbol_type (token::Voisin, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Voisin (const location_type& l)
+      {
+        return symbol_type (token::Voisin, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Coloriser (location_type l)
+      {
+        return symbol_type (token::Coloriser, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Coloriser (const location_type& l)
+      {
+        return symbol_type (token::Coloriser, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Couleur (location_type l)
+      {
+        return symbol_type (token::Couleur, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Couleur (const location_type& l)
+      {
+        return symbol_type (token::Couleur, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Si (location_type l)
+      {
+        return symbol_type (token::Si, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Si (const location_type& l)
+      {
+        return symbol_type (token::Si, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Sinon (location_type l)
+      {
+        return symbol_type (token::Sinon, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Sinon (const location_type& l)
+      {
+        return symbol_type (token::Sinon, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Tant (location_type l)
+      {
+        return symbol_type (token::Tant, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Tant (const location_type& l)
+      {
+        return symbol_type (token::Tant, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_que (location_type l)
+      {
+        return symbol_type (token::que, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_que (const location_type& l)
+      {
+        return symbol_type (token::que, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Repeter (location_type l)
+      {
+        return symbol_type (token::Repeter, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Repeter (const location_type& l)
+      {
+        return symbol_type (token::Repeter, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_fois (location_type l)
+      {
+        return symbol_type (token::fois, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_fois (const location_type& l)
+      {
+        return symbol_type (token::fois, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Pour (location_type l)
+      {
+        return symbol_type (token::Pour, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Pour (const location_type& l)
+      {
+        return symbol_type (token::Pour, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_eq (location_type l)
+      {
+        return symbol_type (token::eq, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_eq (const location_type& l)
+      {
+        return symbol_type (token::eq, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ne (location_type l)
+      {
+        return symbol_type (token::ne, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ne (const location_type& l)
+      {
+        return symbol_type (token::ne, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_inf (location_type l)
+      {
+        return symbol_type (token::inf, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_inf (const location_type& l)
+      {
+        return symbol_type (token::inf, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_sup (location_type l)
+      {
+        return symbol_type (token::sup, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_sup (const location_type& l)
+      {
+        return symbol_type (token::sup, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_degree (location_type l)
+      {
+        return symbol_type (token::degree, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_degree (const location_type& l)
+      {
+        return symbol_type (token::degree, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_f_void (location_type l)
+      {
+        return symbol_type (token::f_void, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_f_void (const location_type& l)
+      {
+        return symbol_type (token::f_void, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -774,9 +1349,9 @@ switch (yytype)
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const unsigned char yytable_[];
+  static const signed char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -1023,12 +1598,12 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 27,     ///< Last index in yytable_.
-      yynnts_ = 4,  ///< Number of nonterminal symbols.
-      yyfinal_ = 11, ///< Termination state number.
+      yylast_ = 154,     ///< Last index in yytable_.
+      yynnts_ = 20,  ///< Number of nonterminal symbols.
+      yyfinal_ = 15, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 13  ///< Number of tokens.
+      yyntokens_ = 52  ///< Number of tokens.
     };
 
 
@@ -1040,7 +1615,7 @@ switch (yytype)
 
 
 } // yy
-#line 1044 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
+#line 1619 "/home/melon/University/S5/TLC/ProjetCity/city/Build/parser.hpp" // lalr1.cc:401
 
 
 
