@@ -2,7 +2,8 @@
 
 #include "scanner.hh"
 #include <cstdlib>
-
+#include <string>
+#include <sstream>
 #define YY_NO_UNISTD_H
 
 using token = yy::Parser::token;
@@ -104,5 +105,9 @@ fin return token::END;
 (#[A-Fa-f0-9]{6}) {
 	yylval->build<std::string>(YYText());
 	return token::hex_RGB;
+}
+
+.	{
+	//this removes white spaces in cout	
 }
 %%

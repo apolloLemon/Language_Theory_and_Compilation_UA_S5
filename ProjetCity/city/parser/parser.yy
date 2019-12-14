@@ -88,7 +88,8 @@ function:
     }|
     Construire RAYON '{' STATEMENTS '}' {
 		//Last rule    	
-    }
+    }|
+    VAR
 RAYON:
 	'(' expression ')' {
 		//Rayon=$2
@@ -158,9 +159,9 @@ HORAIRE:
 
 
 VAR: 
-	id_var '=' operation {
+	id_var '=' expression {
 		try {
-			double val = $3->calculer(driver.getContexte());
+			double val = $3;
             driver.setVariable($1, val);
             std::cout << "#-> " << $1 << " = " << val << std::endl;
         } catch(const std::exception& err) {
