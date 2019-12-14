@@ -77,19 +77,16 @@
 
 %%
 programme:
-    function NL programme
-    | END NL {
+    function programme
+    | %empty {
         YYACCEPT;
     }
 
 function:
-    expression  {
-        std::cout << "#-> " << $1 << std::endl;
-    }|
     Construire RAYON '{' STATEMENTS '}' {
 		//Last rule    	
-    }|
-    VAR
+    }
+
 RAYON:
 	'(' expression ')' {
 		//Rayon=$2
@@ -100,6 +97,7 @@ RAYON:
 
 STATEMENTS:
 	STATEMENT NL STATEMENTS |
+    NL STATEMENTS |
 	%empty
 
 STATEMENT:
@@ -107,7 +105,10 @@ STATEMENT:
 	MANAGE |
 	VAR |
 	KEVIN |
-	CONDLOOP
+	CONDLOOP |
+    expression {
+        std::cout << "#-> " << $1 << std::endl;
+    }
 
 
 COORD:
@@ -167,7 +168,7 @@ VAR:
         } catch(const std::exception& err) {
             std::cerr << "#-> " << err.what() << std::endl;
         }
-	}
+	} 
 
 KEVIN:
 	Coloriser NODE COLOR {} |

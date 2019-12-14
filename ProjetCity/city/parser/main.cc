@@ -17,8 +17,8 @@ void launchSTD (){
 }
 
 void launchFile(const char* optarg){
-	std::cout << "launchFile\n";
-	std::cout << "optarg"<<optarg<<std::endl;
+	//std::cout << "launchFile\n";
+	//std::cout << "optarg"<<optarg<<std::endl;
 	Driver driver;
 	std::ifstream fichier(optarg);
 	Scanner scanner(fichier, std::cout);
@@ -36,7 +36,7 @@ int main( int  argc, char* argv[]) {
 				launchSTD();
 			break;
 			case 'f': 
-			std::cout << "case f\n";
+			//std::cout << "case f\n";
 				launchFile("../Build/tester");
 			break;
 			default:
