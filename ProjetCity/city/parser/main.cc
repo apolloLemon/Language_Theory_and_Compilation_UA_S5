@@ -30,14 +30,14 @@ int main( int  argc, char* argv[]) {
     //Driver driver;
 	
 	int opt;
-    while((opt = getopt(argc,argv,"s:f")) !=-1){
+    while((opt = getopt(argc,argv,"f:s")) !=-1){
 		switch(opt){
 			case 's': 
 				launchSTD();
 			break;
 			case 'f': 
 			//std::cout << "case f\n";
-				launchFile("../Build/tester");
+				launchFile(optarg);
 			break;
 			default:
 				std::cerr<<"Error"<<std::endl;

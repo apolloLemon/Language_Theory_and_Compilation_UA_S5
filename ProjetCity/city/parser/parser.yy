@@ -39,7 +39,6 @@
 }
 
 %token                  NL
-%token                  END
 
 %token <double> 		num
 %token <std::string> 	id_maison id_var
@@ -85,7 +84,8 @@ programme:
 function:
     Construire RAYON '{' STATEMENTS '}' {
 		//Last rule    	
-    }
+    } |
+    VAR NL
 
 RAYON:
 	'(' expression ')' {

@@ -24,7 +24,6 @@ using token = yy::Parser::token;
 %{
     yylval = lval;
 %}
-fin return token::END;
 
 "+" return '+';
 "*" return '*';
@@ -38,7 +37,6 @@ fin return token::END;
 "[" return '[';
 "]" return ']';
 "," return ',';
-"}" return '}';
 
 "=" return '=';
 "==" return token::eq;
