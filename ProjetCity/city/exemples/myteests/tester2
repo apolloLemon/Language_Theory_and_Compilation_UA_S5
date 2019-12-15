@@ -1,1 +1,13 @@
-%%i=0
+Construire (3) {
+	i=0
+	Maison M1 (3,i,0)
+	j=3
+	Maison
+	Route maison[1] -> maison[2]
+
+	Si(0==1){
+		Route maison[2] -> maison[1]
+	} Sinon {
+		Detruire maison[1]->maison[2]
+	}
+}
