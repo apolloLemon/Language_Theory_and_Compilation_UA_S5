@@ -161,7 +161,7 @@ MANAGE:
 	Tourner NODE HORAIRE {
 		$$ = std::make_shared<Tourner>($2,$3);
 	} |
-	Orienter NODE DEGREE {
+	Orienter NODE expression degree {
 		$$ = std::make_shared<Orienter>($2,$3);
 	}  |
 	Deplacer NODE arrow COORD {
@@ -182,18 +182,13 @@ MANAGE:
 	Voisinage NODE {
 		$$ = std::make_shared<Voisinage>($2);
 	}
-
-DEGREE:
-	num degree {
-		$$ = std::make_shared<DEGREE>($1);
-	}
 	
 HORAIRE:
 	horaire {
-		$$ = std::make_shared<HORAIRE>(0);
+		$$ = 0;
 	} |
 	'!' horaire {
-		$$ = std::make_shared<HORAIRE>(1);
+		$$ = 1;
 	} 
 
 
@@ -214,10 +209,10 @@ KEVIN:
 	}
 COLOR:
 	hex_RGB {
-		$$ = std::make_shared<COLOR>($1);
+		$$ = std::make_shared<hexRGB>($1);
 	} |
 	COORD {
-		$$ = std::make_shared<COLOR>($1);
+		$$ = $1;
 	}
 
 CONDLOOP:
@@ -232,10 +227,10 @@ CONDLOOP:
 	}
 SINON:
 	Sinon '{' STATEMENTS '}' {
-		$$ = std::make_shared<Sinon>($3);
+		$$ = $3;
 	} |
 	%empty {
-		$$ = std::make_shared<Sinon>();
+		$$ = std::vector<ExpressionPtr>();
 	}
 
 expression:
