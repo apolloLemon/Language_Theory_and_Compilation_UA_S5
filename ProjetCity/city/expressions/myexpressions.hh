@@ -6,23 +6,28 @@ class COORD : public Expression {
 public:
     COORD() = delete;
     COORD(const COORD &) = default;
-    COORD(double x,double y,double z);
+    COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z);
 
     double calculer(const Contexte& contexte) const override;
+    /*
+		calculer Can be used to check coords for a house
 
-    double x() const {return _x;}
-    double y() const {return _y;}
-    double z() const {return _z;}
+		or just use the getters below 
+	*/
+    ExpressionPtr x(const Contexte& contexte) const {return _x.calculer(contexte);}
+    ExpressionPtr y(const Contexte& contexte) const {return _y.calculer(contexte);}
+    ExpressionPtr z(const Contexte& contexte) const {return _z.calculer(contexte);}
+
 
 private:
-    double _x,_y,_z;
+    ExpressionPtr _x,_y,_z;
 };
 
 class NODE : public Expression {
 public:
     NODE() = delete;
     NODE(const NODE &) = default;
-    NODE(ExpressionPtr indicemaison);
+    NODE(ExpressionPtr iMaison);
     /*
 	This can revceive a COORD, OPexpression, or IDMaison
 	each when calculer() returns the graph node number
@@ -32,7 +37,7 @@ public:
     double calculer(const Contexte& contexte) const override;
 
 private:
-    ExpressionPtr indicemaison;
+    ExpressionPtr _iMaison;
 };
 
 class Maison : public Expression {
@@ -43,11 +48,11 @@ public:
 
     double calculer(const Contexte& contexte) const override;
 
-    void setCOORD(ExpressionPtr coord);
+    void setCOORD(ExpressionPtr coord) {_coord=coord};
 
 private:
     std::string _nom;
-    COORD _coords;
+    COORD _coord;
 };
 
 class IDMaison : public Expression {
@@ -97,7 +102,7 @@ public:
     double calculer(const Contexte& contexte) const override;
 
 private:
-    ExpressionPtr _src;
+    ExpressionPtr _iMaison;
     double _dir;
 };
 
