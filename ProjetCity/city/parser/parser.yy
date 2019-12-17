@@ -205,7 +205,7 @@ KEVIN:
 		$$ = std::make_shared<Couleur>($2);
 	} |
 	Voisin NODE expression {
-		$$ = std::make_shared<Voision>($2,$3);
+		$$ = std::make_shared<Voisin>($2,$3);
 	}
 COLOR:
 	hex_RGB {

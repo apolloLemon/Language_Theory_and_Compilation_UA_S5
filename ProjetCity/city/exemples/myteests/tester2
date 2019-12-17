@@ -10,4 +10,6 @@ Construire (3) {
 	} Sinon {
 		Detruire maison[1]->maison[2]
 	}
+	i=(i+j)*2
+	(i+j)*2
 }

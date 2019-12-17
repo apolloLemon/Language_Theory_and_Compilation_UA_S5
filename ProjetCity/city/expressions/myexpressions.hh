@@ -88,11 +88,11 @@ private:
     ExpressionPtr _src, _dst;
 };
 
-class Trouner : public Expression {
+class Tourner : public Expression {
 public:
-    Trouner() = delete;
-    Trouner(const Trouner &) = default;
-    Trouner(ExpressionPtr iMaison,double dir);
+    Tourner() = delete;
+    Tourner(const Tourner &) = default;
+    Tourner(ExpressionPtr iMaison,double dir);
     /*
 	This can revceive a COORD, OPexpression, or IDMaison
 	each when calculer() returns the graph node number
@@ -149,7 +149,7 @@ public:
     double calculer(const Contexte& contexte) const override;
 
 private:
-	bool _mode; //flag for house or road delete, init in constrctr
+	bool _maison; //flag for house or road delete, init in constrctr
     ExpressionPtr _src, _dst;
 };
 
@@ -289,13 +289,13 @@ class Si : public Expression {
 public:
     Si() = delete;
     Si(const Si &) = default;
-    Si(ExpressionPtr exp,std::vector<ExpressionPtr> statements ,std::vector<ExpressionPtr> else);
+    Si(ExpressionPtr exp,std::vector<ExpressionPtr> statements ,std::vector<ExpressionPtr> else_sts);
 
     double calculer(const Contexte& contexte) const override;
 
 private:
     ExpressionPtr _exp;
-    std::vector<ExpressionPtr> _statements, _else;
+    std::vector<ExpressionPtr> _statements, _else_sts;
 };
 
 class TantQue : public Expression {
