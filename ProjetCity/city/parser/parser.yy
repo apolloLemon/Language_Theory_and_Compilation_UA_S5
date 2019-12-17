@@ -67,170 +67,220 @@
 %token                  f_void
 
 
-%type <int>             expression NODE
-%type <ExpressionPtr>   operation
-%type <int>				COORD
+%type <int>             NODE
+%type <ExpressionPtr>   expression 
+%type <ExpressionPtr>   STATEMENT
+
+%type <std::vector<ExpressionPtr>> STATEMENTS
+%type <int>				COORD 
 %left '-' '+' eq ne
 %left '*' '/' inf sup
 %precedence  NEG
 
 %%
 programme:
-    function programme
-    | %empty {
+    function programme {
+    	$$=$2
+    	$$.push_back($1);
+    }| 
+    %empty {
+    	driver.setAST($$);
         YYACCEPT;
     }
 
 function:
     Construire RAYON '{' STATEMENTS '}' {
-		//Last rule    	
+        $$ = std::make_shared<Construire>($2,$4);    	
     } |
-    VAR NL
+    VAR NL {
+    	$$ = std::make_shared<Affect>($1);
+    }
 
 RAYON:
 	'(' expression ')' {
-		//Rayon=$2
+		$$ = std::make_shared<RAYON>($2);
 	}|
 	%empty {
-		//Rayon=5
+		$$ = std::make_shared<RAYON>(5);
 	}
 
 STATEMENTS:
-	STATEMENT NL STATEMENTS |
-    NL STATEMENTS |
-	%empty
+	STATEMENT NL STATEMENTS {
+    $$=$3;
+    $$.push_back($1);
+    } |
+    NL STATEMENTS {$$=$2;}|
+	%empty {$$=std::vector<ExpressionPtr>();}
 
 STATEMENT:
-	BASE |
-	MANAGE |
-	VAR |
-	KEVIN |
-	CONDLOOP |
-    expression {
-        std::cout << "#-> " << $1 << std::endl;
-    }
+	BASE {$$=$1}|
+	MANAGE {$$=$1}|
+	VAR {$$=$1}|
+	KEVIN {$$=$1}|
+	CONDLOOP {$$=$1}|
 
 
 COORD:
 	'(' expression ',' expression ',' expression ')' {
-		//return coord
+		$$ = std::make_shared<COORD>($2,$4,$6);
 	}
 
 
 NODE:
-	id_maison {} |
-	maison '[' expression ']' {}|
+	id_maison {
+		$$ = std::make_shared<NODE>($1);
+	} |
+	maison '[' expression ']' {
+		$$ = std::make_shared<NODE>($3);
+	}|
 	COORD {
-		//These Return a graph node
+		$$ = std::make_shared<NODE>($1);
 	}
 
 BASE:
 	HOUSE {
-		//Makes House at random xyz
+		$$=$1;
 	} |
 	HOUSE COORD {
-		//Makes House at xyz
+		$1.setCOORD($2);
+		$$=$1;
 	} |
-	Route NODE arrow NODE {}
+	Route NODE arrow NODE {
+		$$ = std::make_shared<Route>($2,$4);
+	}
 
 HOUSE:
 	Maison {
-		//Unamed House
+		$$ = std::make_shared<Maison>();
 	} |
 	Maison id_maison {
-		//House name = id_maison
+		$$ = std::make_shared<Maison>($2);
 	}
 
 MANAGE:
-	Tourner NODE HORAIRE {} |
-	Orienter NODE DEGREE {}  |
-	Deplacer NODE arrow COORD {} |
-	Detruire NODE {} |
-	Detruire NODE {} arrow NODE |
-	Position NODE {} |
-	Orientation NODE {} |
-	Voisinage NODE {}
+	Tourner NODE HORAIRE {
+		$$ = std::make_shared<Tourner>($2,$3);
+	} |
+	Orienter NODE DEGREE {
+		$$ = std::make_shared<Orienter>($2,$3);
+	}  |
+	Deplacer NODE arrow COORD {
+		$$ = std::make_shared<Deplacer>($2,$4);
+	} |
+	Detruire NODE {
+		$$ = std::make_shared<Detruire>($2);
+	} |
+	Detruire NODE arrow NODE{
+		$$ = std::make_shared<Detruire>($2,$4);
+	} |
+	Position NODE {
+		$$ = std::make_shared<Position>($2);
+	} |
+	Orientation NODE {
+		$$ = std::make_shared<Orientation>($2);
+	} |
+	Voisinage NODE {
+		$$ = std::make_shared<Voisinage>($2);
+	}
 
 DEGREE:
-	num degree {}
+	num degree {
+		$$ = std::make_shared<DEGREE>($1);
+	}
 	
 HORAIRE:
-	horaire {} |
-	'!' horaire {} 
+	horaire {
+		$$ = std::make_shared<HORAIRE>(0);
+	} |
+	'!' horaire {
+		$$ = std::make_shared<HORAIRE>(1);
+	} 
 
 
 VAR: 
 	id_var '=' expression {
-		try {
-			double val = $3;
-            driver.setVariable($1, val);
-            std::cout << "#-> " << $1 << " = " << val << std::endl;
-        } catch(const std::exception& err) {
-            std::cerr << "#-> " << err.what() << std::endl;
-        }
+		$$ = std::make_shared<Affect>($1,$3);
 	} 
 
 KEVIN:
-	Coloriser NODE COLOR {} |
-	Couleur NODE {} |
-	Voisin NODE expression
+	Coloriser NODE COLOR {
+		$$ = std::make_shared<Coloriser>($2,$3);
+	} |
+	Couleur NODE {
+		$$ = std::make_shared<Couleur>($2);
+	} |
+	Voisin NODE expression {
+		$$ = std::make_shared<Voision>($2,$3);
+	}
 COLOR:
-	hex_RGB {} |
-	COORD {}
+	hex_RGB {
+		$$ = std::make_shared<COLOR>($1);
+	} |
+	COORD {
+		$$ = std::make_shared<COLOR>($1);
+	}
 
 CONDLOOP:
-	Si expression '{' STATEMENTS '}' SINON {} |
-	Tant que expression '{' STATEMENTS '}' {} |
-	Repeter expression fois '{' STATEMENTS '}' {}
+	Si expression '{' STATEMENTS '}' SINON {
+		$$ = std::make_shared<Si>($2,$4,$6); 
+	} |
+	Tant que expression '{' STATEMENTS '}' {
+		$$ = std::make_shared<TantQue>($3,$5);
+	} |
+	Repeter expression fois '{' STATEMENTS '}' {
+		$$ = std::make_shared<Repeter>($2,$5);
+	}
 SINON:
-	Sinon '{' STATEMENTS '}' {} |
-	%empty
+	Sinon '{' STATEMENTS '}' {
+		$$ = std::make_shared<Sinon>($3);
+	} |
+	%empty {
+		$$ = std::make_shared<Sinon>();
+	}
 
 expression:
-    operation {
-        $$ = $1->calculer(driver.getContexte());
-    }
-
-operation:
     num {
         $$ = std::make_shared<Constante>($1);
+    } 
+    | id_maison {
+        $$ = std::make_shared<IDMaison>($1);
     }
     | id_var {
         $$ = std::make_shared<Variable>($1);
     }
-    | '(' operation ')' {
+    | '(' expression ')' {
         $$ = $2;
     }
-    | operation '+' operation {
+    | expression '+' expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::plus);
     }
-    | operation '-' operation {
+    | expression '-' expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::moins);
     }
-    | operation '*' operation {
+    | expression '*' expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::multiplie);
     }
-    | operation '/' operation {
+    | expression '/' expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::divise);
     }
-    | '-' operation %prec NEG {
+    | '-' expression %prec NEG {
         $$ = std::make_shared<ExpressionUnaire>($2, OperateurUnaire::neg);
     } |
 
 
-    operation eq operation {
+    expression eq expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::egal);
     } |
-    operation ne operation {
+    expression ne expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::negal);
     } |
-    operation inf operation {
+    expression inf expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::inf);
     } |
-    operation sup operation {
+    expression sup expression {
         $$ = std::make_shared<ExpressionBinaire>($1, $3, OperateurBinaire::sup);
     } |
-    '!' operation %prec NEG {
+    '!' expression %prec NEG {
         $$ = std::make_shared<ExpressionUnaire>($2, OperateurUnaire::lneg);
     }
 %%
