@@ -2,6 +2,37 @@
 #include "expression.hh"
 #include <vector>
 
+class RAYON : public Expression {
+public:
+    RAYON() = default;
+    RAYON(const RAYON &) = default;
+    RAYON(ExpressionPtr rayon);
+    /*
+
+    */
+
+    double calculer(const Contexte& contexte) const override;
+
+private:
+    ExpressionPtr _rayon;
+};
+
+class Construire : public Expression {
+public:
+    Construire() = delete;
+    Construire(const Construire &) = default;
+    Construire(ExpressionPtr rayon,std::vector<ExpressionPtr> sts);
+    /*
+
+    */
+
+    double calculer(const Contexte& contexte) const override;
+
+private:
+    ExpressionPtr _rayon;
+    std::vector<ExpressionPtr> _statements;
+};
+
 class COORD : public Expression {
 public:
     COORD() = delete;

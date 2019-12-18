@@ -1,36 +1,56 @@
 #include "myexpressions.hh"
 
 
-/*NODE::NODE(ExpressionPtr x):
+/*ASTNODE::ASTNODE(ExpressionPtr x):
 _x(x){}
 
-double NODE::calculer(const Contexte& contexte){
+double ASTNODE::calculer(const Contexte& contexte){
 	return 0; 
 	/*
-		This returns 	the index of the node
+		This returns 	n o t h i n g
 }
 	*/
+
+RAYON::RAYON(ExpressionPtr rayon):
+_rayon(rayon){}
+
+double RAYON::calculer(const Contexte& contexte){
+	if(_rayon) return _rayon->calculer(contexte);
+	else return 5;
+}
+
+Construire::Construire(ExpressionPtr x,std::vector<ExpressionPtr> y):
+_rayon(x),_statements(y){}
+
+double Construire::calculer(const Contexte& contexte){
+	double rayon=_rayon->calculer(contexte);
+	double lotCount=rayon*6; //hexagonal map
+	//Initialise the Graph to the right size
+	contexte.getCity()->Init(lotCount);
+
+	//Execute instructions
+	for(auto sts : _statements) sts->calculer();
+
+	return 0; //success?
+}
 
 
 COORD::COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z):
 _x(x),_y(y),_z(z){}
 
 double COORD::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		This returns 	1 if the coord is occupied
-						0 else
-	*/
+	for(double i=0; i<contexte.Houses().size();i++)
+		if(contexte.Houses()[i].at(_x,_y,_z))
+			return i;
+	//returns the index of the house, or -1
+	return -1; 
 }
 
 NODE::NODE(ExpressionPtr iMaison):
 _iMaison(iMaison){}
 
 double NODE::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		This returns 	the index of the node
-	*/
+	return iMaison->calculer(contexte); 
 }
 
 Maison::Maison(std::string nom):
@@ -51,10 +71,11 @@ IDMaison::IDMaison(std::string iMaison):
 _iMaison(iMaison){}
 
 double IDMaison::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		This returns 	the index of the node
-	*/
+	for(double i=0; i<contexte.Houses().size();i++)
+		if(contexte.Houses()[i].id(iMaison))
+			return i;
+	//returns the index of the house, or -1
+	return -1;
 }
 
 Route::Route(ExpressionPtr x, ExpressionPtr y):
@@ -70,29 +91,27 @@ double Route::calculer(const Contexte& contexte){
 	*/
 }
 
+
 Tourner::Tourner(ExpressionPtr x, double y):
 _iMaison(x),_dir(y){}
 
 double Tourner::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		Turns a house in Context
+	double i=_iMaison->calculer();
+	contexte.Houses()[i].orientation += 90*_dir;
+	contexte.Houses()[i].orient();
 
-		This returns 	new angle
-	*/
+	return contexte.Houses()[i].orientation; //updated angle
 }
 
 Orienter::Orienter(ExpressionPtr x, ExpressionPtr y):
-_iMaison(x),deg(y){}
+_iMaison(x),_deg(y){}
 
 double Orienter::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		Turns a house in Context
-
-		This returns 	new angle
-	*/
+	double i=_iMaison->calculer();
+	contexte.Houses()[i].orient(_deg->calculer());	
+	return contexte.Houses()[i].orientation; //updated angle
 }
+
 
 Deplacer::Deplacer(ExpressionPtr x, ExpressionPtr y):
 _iMaison(x),_coord(y){}
@@ -178,7 +197,7 @@ double Coloriser::calculer(const Contexte& contexte){
 	/*
 		Colors hours in context
 
-		This return the wave length of light associated for the color.. so you can change the color by step while it's below a threshold
+		This return the wavelength of light associated for the color.. so you can change the color by step while it's below a threshold
 	*/
 }
 
@@ -190,7 +209,7 @@ double Couleur::calculer(const Contexte& contexte){
 	/*
 		cout couleur?
 
-		This return the wave length of light associated for the color.. so you can sort houses by color..  i f   I   a d d   a   s o r t   f u n c
+		This return the wavelength of light associated for the color.. so you can sort houses by color..  i f   I   a d d   a   s o r t   f u n c
 	*/
 }
 
@@ -214,47 +233,48 @@ hexRGB::hexRGB(const std::string & hexcode):
 double hexRGB::calculer(const Contexte& contexte){
 	return 0; 
 	/*
-		You mainly use getters for this
+		You mainly use getters for this class
 
-		This returns 	the wave length of light
+		This returns 	the wavelength of light
 	*/
 }
 
 Si::Si(ExpressionPtr exp,std::vector<ExpressionPtr> sts,std::vector<ExpressionPtr> else_sts): 
-_exp(exp),_statements(sts),_else_sts(else_sts),{}
+_exp(exp),_statements(sts),_else_sts(else_sts){}
 
 double Si::calculer(const Contexte& contexte){
-	return 0;
-	/*
-		if exp 		for i in sts: i.exec()
-		else 		for i in else_sts: i.exec()
-
-		return 		exp.calculer()
-	*/
+	double condition = exp->calculer(contexte);
+	if (condition) 		
+		for(auto sts : _statments)
+			sts.calculer(contexte);
+	else
+		for(auto sts : _else_sts)
+			sts.calculer(contexte);
+	
+	return condition;
 }
 
 TantQue::TantQue(ExpressionPtr exp,std::vector<ExpressionPtr> sts,std::vector<ExpressionPtr> else_sts): 
-_exp(exp),_statements(sts),_else_sts(else_sts),{}
+_exp(exp),_statements(sts){}
 
 double TantQue::calculer(const Contexte& contexte){
-	return 0;
-	/*
-		while exp 	for i in sts: i.exec()
-		
-		return 		iterations
-	*/
+	double i=0;
+	while (exp->calculer(contexte)){
+		i++;
+		for(auto sts : _statments)
+			sts.calculer(contexte);
+	}
+	return i; 		//iterations
 }
 
 Repeter::Repeter(ExpressionPtr exp,std::vector<ExpressionPtr> sts,std::vector<ExpressionPtr> else_sts): 
-_exp(exp),_statements(sts),_else_sts(else_sts),{}
+_exp(exp),_statements(sts){}
 
 double Repeter::calculer(const Contexte& contexte){
-	return 0;
-	/*
-		i=fois
-		while i 	for i in sts: i.exec()
-					--i
-					
-		return 		iterations
-	*/
-}
+	double i=exp->calculer(contexte);
+	while (i--)
+		for(auto sts : _statments) 
+			sts.calculer(contexte);
+
+	return i;		//iterations restantes
+}//J'aurrais bien aime' moins me repeter...

@@ -101,7 +101,7 @@ RAYON:
 		$$ = std::make_shared<RAYON>($2);
 	}|
 	%empty {
-		$$ = std::make_shared<RAYON>(5);
+		$$ = std::make_shared<RAYON>();
 	}
 
 STATEMENTS:
@@ -185,10 +185,10 @@ MANAGE:
 	
 HORAIRE:
 	horaire {
-		$$ = 0;
+		$$ = 1;
 	} |
 	'!' horaire {
-		$$ = 1;
+		$$ = -1;
 	} 
 
 

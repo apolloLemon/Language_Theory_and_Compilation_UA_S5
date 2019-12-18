@@ -55,6 +55,7 @@ public:
 	int VertexCount() const {return vertexCount;}
 	double Arc(int src,int dst) const {return adjacencyMatrix[src][dst];}
 
+/*
 	//Algorithms
 private:
 	std::array<bool, MAX> seen;
@@ -63,12 +64,5 @@ public:
 	void BreadthFirstSearch();
 	void Explore(int);
 //End Of General Graph Stuff
-};
-
-
-/*
-class CityGraph : public Graph {
-private:
-
-};
 */
+};
