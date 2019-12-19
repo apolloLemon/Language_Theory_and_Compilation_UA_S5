@@ -29,19 +29,19 @@ Here are the "basic graph" attributes and methods
 private:
 	//Adjacency Matrix
 	Matrix adjacencyMatrix; //Adjacency Matrix double weight
-	unsigned int vertexCount; //number of veticies
+	unsigned int vertexCount=0; //number of veticies //initialised so contructors can use
 	bool oriented;
 
 public:
 	//Constructors, initators, setters
-	//Graph<T>();
-	//~Graph<T>()=default;
+	Graph()=default;
 
 	void Init(unsigned int);
+	void Citinit(unsigned int); //like init be preserves used nodes
 	
 	void SetOriented(bool o){oriented=o;}
 	void Arc(int,int,double);
-
+	void RemoveArc(int,int);
 	/*
 	Information (const)
 	

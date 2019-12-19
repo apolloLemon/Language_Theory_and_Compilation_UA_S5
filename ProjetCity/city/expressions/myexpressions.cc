@@ -46,6 +46,13 @@ double COORD::calculer(const Contexte& contexte){
 	return -1; 
 }
 
+double COORD::distance(const COORD & o) {
+	return HexDistance(
+		x(contexte),y(contexte),z(contexte),
+		(o->x(contexte)),(o->y(contexte)),(o->z(contexte))
+		);/
+}
+
 NODE::NODE(ExpressionPtr iMaison):
 _iMaison(iMaison){}
 
@@ -82,12 +89,18 @@ Route::Route(ExpressionPtr x, ExpressionPtr y):
 _src(x),_dst(y){}
 
 double Route::calculer(const Contexte& contexte){
-	return 0; 
+	double src = _src->calculer(contexte);
+	double dst = _dst->calculer(contexte);
+
+	double distance=dst-src;// This needs to be corrected
+
+	contexte.Graph()->Arc(src,dst,distance);
+
+	return distance; 
 	/*
 		Adds an arc to the graph in Context
 
-		This returns 	1 if the road was made
-						0 if not
+		This returns 	distance
 	*/
 }
 
@@ -117,7 +130,14 @@ Deplacer::Deplacer(ExpressionPtr x, ExpressionPtr y):
 _iMaison(x),_coord(y){}
 
 double Deplacer::calculer(const Contexte& contexte){
-	return 0; 
+	if(_coord->calculer(contexte)!=-1) return 0;
+
+	double i=_iMaison->calculer(contexte);
+	contexte.Houses()[i].x=_coord->x();
+	contexte.Houses()[i].y=_coord->y();
+	contexte.Houses()[i].z=_coord->z();
+	//Update Roads
+
 	/*
 		Moves a house in Context
 		just the coords
@@ -132,7 +152,16 @@ Detruire::Detruire(ExpressionPtr x, ExpressionPtr y):
 _src(x),_dst(y), _maison(0){}
 
 double Detruire::calculer(const Contexte& contexte){
-	return 0; 
+	double src=_src->calculer();
+	if(_maison) {/* 
+	remove house from vector
+	remove roads to and from
+	*/}
+	else {
+		double dst=_dst->calculer();
+		contexte.City().RemoveArc(src,dst);
+	}
+	return 0;
 	/*
 		If _maison 		destroys House and roads from it (in context and graph)
 		else 			removes arc
@@ -145,10 +174,16 @@ Position::Position(ExpressionPtr iMaison):
 _iMaison(iMaison){}
 
 double Position::calculer(const Contexte& contexte){
+	double i=_iMaison->calculer(contexte);
+
+	std::cout << "(" 
+	<< contexte.Houses()[i].x <<","
+	<< contexte.Houses()[i].y <<","
+	<< contexte.Houses()[i].z <<")";
+
 	return 0; 
 	/*
 		cout position?
-
 		This returns 	to hell from whence it came
 	*/
 }
@@ -157,12 +192,12 @@ Orientation::Orientation(ExpressionPtr iMaison):
 _iMaison(iMaison){}
 
 double Orientation::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		cout Orientation?
+	double i=_iMaison->calculer(contexte);
 
-		This returns 	to hell from whence it came
-	*/
+	std::cout 
+	<< contexte.Houses()[i].orientation;
+
+	return 0;
 }
 
 Voisinage::Voisinage(ExpressionPtr iMaison):
@@ -205,11 +240,17 @@ Couleur::Couleur(ExpressionPtr iMaison):
 _iMaison(iMaison){}
 
 double Couleur::calculer(const Contexte& contexte){
+	double i=_iMaison->calculer(contexte);
+
+	std::cout << "(" 
+	<< contexte.Houses()[i].r <<","
+	<< contexte.Houses()[i].g <<","
+	<< contexte.Houses()[i].b <<")";
+
 	return 0; 
 	/*
 		cout couleur?
-
-		This return the wavelength of light associated for the color.. so you can sort houses by color..  i f   I   a d d   a   s o r t   f u n c
+		This return f(r,g,b)
 	*/
 }
 
@@ -234,7 +275,6 @@ double hexRGB::calculer(const Contexte& contexte){
 	return 0; 
 	/*
 		You mainly use getters for this class
-
 		This returns 	the wavelength of light
 	*/
 }

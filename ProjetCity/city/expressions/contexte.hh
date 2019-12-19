@@ -19,6 +19,7 @@ private:
 struct House {
     std::string identifier;
     double x, y, z, orientation;
+    int r,g,b;
 
     bool at(double _x,double _y,double _z)const{return (x==_x)&&(y==_y)&&(z==_z);}
     bool id(std::string id)const{return (identifier==id);}

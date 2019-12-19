@@ -2,6 +2,14 @@
 #include "expression.hh"
 #include <vector>
 
+double HexDistance(double x1,double y1,double z1,double x2,double y2,double z2) {
+    return (
+        x1-x2
+    +   y1-y2
+    +   z1-z2
+        );
+}
+
 class RAYON : public Expression {
 public:
     RAYON() = default;
@@ -45,6 +53,7 @@ public:
 
 		or just use the getters below 
 	*/
+    double distance(const COORD &) const;
     ExpressionPtr x(const Contexte& contexte) const {return _x.calculer(contexte);}
     ExpressionPtr y(const Contexte& contexte) const {return _y.calculer(contexte);}
     ExpressionPtr z(const Contexte& contexte) const {return _z.calculer(contexte);}
@@ -108,9 +117,7 @@ public:
     Route(const Route &) = default;
     Route(ExpressionPtr src,ExpressionPtr dst);
     /*
-	This can revceive a COORD, OPexpression, or IDMaison
-	each when calculer() returns the graph node number
-	for the house
+	
     */
 
     double calculer(const Contexte& contexte) const override;
@@ -125,9 +132,7 @@ public:
     Tourner(const Tourner &) = default;
     Tourner(ExpressionPtr iMaison,double dir);
     /*
-	This can revceive a COORD, OPexpression, or IDMaison
-	each when calculer() returns the graph node number
-	for the house
+	
     */
 
     double calculer(const Contexte& contexte) const override;

@@ -30,9 +30,29 @@ void Graph::Init(unsigned int nV) {
 	//std::cout << "Graph::Init of size "<<vertexCount<<" completed\n";
 }
 
+void Graph::Citinit(unsigned int nV) {
+	if(vertexCount) {
+		if (vertexCount<nV) {
+			for(int i=vertexCount;i<nV;i++)
+				for(int j=vertexCount;j<nV;j++)
+					adjacencyMatrix[i][j]=std::numeric_limits<double>::infinity();
+		}else{
+			for(int i=vertexCount-1;i>=nV;i--)
+				for(int j=vertexCount;j>=nV;j--)
+					adjacencyMatrix[i][j]=std::numeric_limits<double>::infinity();
+		}
+		vertexCount=nV;
+	} else Init(nV);
+}
+
 //void Graph::SetOriented(bool o){} //in .h
 
 void Graph::Arc(int src, int dst, double w) {
 	if(!oriented) adjacencyMatrix[dst][src]=w;
 	adjacencyMatrix[src][dst]=w;
+}
+
+void Graph::RemoveArc(int src, int dst) {
+	if(!oriented) adjacencyMatrix[dst][src]=std::numeric_limits<double>::infinity();;
+	adjacencyMatrix[src][dst]=std::numeric_limits<double>::infinity();;
 }
