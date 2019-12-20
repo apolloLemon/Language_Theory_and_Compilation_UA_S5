@@ -15,6 +15,7 @@
     #include "expression.hh"
     #include "constante.hh"
     #include "variable.hh"
+    #include "myexpressions.hh"
 
     class Scanner;
     class Driver;

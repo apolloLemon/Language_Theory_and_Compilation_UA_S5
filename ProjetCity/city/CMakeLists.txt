@@ -20,6 +20,7 @@ file(GLOB EXPRESSION_HEADERS
     expressions/expressionUnaire.hh
     expressions/constante.hh
     expressions/variable.hh
+    expressions/myexpressions.hh
     )
 
 add_library(libexpressions 
@@ -28,6 +29,7 @@ add_library(libexpressions
     expressions/expressionUnaire.cc
     expressions/constante.cc
     expressions/variable.cc
+    expressions/myexpressions.cc
     ${EXPRESSION_HEADERS}
     )
 
