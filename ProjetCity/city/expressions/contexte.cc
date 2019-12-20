@@ -20,6 +20,13 @@ const double& Contexte::operator[](const std::string & nom) const {
     return variables.at(nom);
 }
 
+bool Contexte::Occupied(double x,double y,double z) const {
+    for(double i=0; i<Houses().size();i++)
+        if(Houses()[i].at(_x,_y,_z))
+            return i;
+    return -1;
+}
+
 ExceptionContexte::ExceptionContexte(std::string errmsg) :
 	_errmsg(errmsg) {}
 

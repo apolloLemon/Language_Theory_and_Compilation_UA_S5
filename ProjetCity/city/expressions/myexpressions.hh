@@ -1,13 +1,15 @@
 #include <string>
 #include "expression.hh"
 #include <vector>
+#include <cstdlib>//rand
+
 
 double HexDistance(double x1,double y1,double z1,double x2,double y2,double z2) {
     return (
         x1-x2
     +   y1-y2
     +   z1-z2
-        );
+        )/2;
 }
 
 class RAYON : public Expression {

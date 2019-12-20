@@ -1,5 +1,7 @@
 #include "myexpressions.hh"
+#include "../parser/contexte.hh"
 
+srand(time(NULL));
 
 /*ASTNODE::ASTNODE(ExpressionPtr x):
 _x(x){}
@@ -26,7 +28,7 @@ double Construire::calculer(const Contexte& contexte){
 	double rayon=_rayon->calculer(contexte);
 	double lotCount=rayon*6; //hexagonal map
 	//Initialise the Graph to the right size
-	contexte.getCity()->Init(lotCount);
+	contexte.getCity()->Citinit(lotCount);
 
 	//Execute instructions
 	for(auto sts : _statements) sts->calculer();
@@ -39,11 +41,12 @@ COORD::COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z):
 _x(x),_y(y),_z(z){}
 
 double COORD::calculer(const Contexte& contexte){
-	for(double i=0; i<contexte.Houses().size();i++)
+	return contexte.Occupied( x(contexte),y(contexte),z(contexte) );
+	/*for(double i=0; i<contexte.Houses().size();i++)
 		if(contexte.Houses()[i].at(_x,_y,_z))
 			return i;
 	//returns the index of the house, or -1
-	return -1; 
+	return -1; */
 }
 
 double COORD::distance(const COORD & o) {
@@ -60,26 +63,43 @@ double NODE::calculer(const Contexte& contexte){
 	return iMaison->calculer(contexte); 
 }
 
-Maison::Maison(std::string nom):
+Maison::Maison(const std::string& nom):
 _nom(nom){}
 
 double Maison::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		Makes a house class in Context,
-		add a vertex in the graph
+	double vc=contexte.City().VertexCount();
+	House  h ={.identifier=_nom};
 
+	if(vc<=contexte.Houses().size()) return 0;
+	if(!_coord) do {
+		h.x=rand()%vc;
+		h.y=rand()%vc;
+		h.z=rand()%vc;
+	} while((x+y+z)%2 		||
+			(x+y+z)>vc*2 	||
+			contexte.Occupied(x,y,z)!=-1
+			);
+	else {
+		if(_coord->calculer()) return 0;
+		h.x=_coord->x(contexte);
+		h.y=_coord->y(contexte);
+		h.z=_coord->z(contexte);
+	}
+
+	contexte.Houses().push_back(h);
+	return 1;
+	/*
 		This returns 	1 if the house was made
 						0 if not
 	*/
 }
 
-IDMaison::IDMaison(std::string iMaison):
-_iMaison(iMaison){}
+IDMaison::IDMaison(std::string nom):
+_nom(nom){}
 
 double IDMaison::calculer(const Contexte& contexte){
 	for(double i=0; i<contexte.Houses().size();i++)
-		if(contexte.Houses()[i].id(iMaison))
+		if(contexte.Houses()[i].id(_nom))
 			return i;
 	//returns the index of the house, or -1
 	return -1;
@@ -97,11 +117,6 @@ double Route::calculer(const Contexte& contexte){
 	contexte.Graph()->Arc(src,dst,distance);
 
 	return distance; 
-	/*
-		Adds an arc to the graph in Context
-
-		This returns 	distance
-	*/
 }
 
 
@@ -136,7 +151,7 @@ double Deplacer::calculer(const Contexte& contexte){
 	contexte.Houses()[i].x=_coord->x();
 	contexte.Houses()[i].y=_coord->y();
 	contexte.Houses()[i].z=_coord->z();
-	//Update Roads
+	//Update Road Distances
 
 	/*
 		Moves a house in Context
@@ -216,19 +231,23 @@ Affect::Affect(ExpressionPtr x, ExpressionPtr y):
 _idvar(x),_exp(y){}
 
 double Affect::calculer(const Contexte& contexte){
-	return 0; 
-	/*
-		i=exp copy the TP3 exo2 code
+	double val = _exp(contexte);
+	contexte[_idvar.str()]=val;
 
-		This returns 	success ? //Context throws an error with unknown var.. so if there's another way for it to mess up, we can return it here
-	*/
+	return val;//returns the value affected 
 }
 
 Coloriser::Coloriser(ExpressionPtr iMaison,ExpressionPtr color):
 _iMaison(iMaison),_color(color){}
 
 double Coloriser::calculer(const Contexte& contexte){
-	return 0; 
+	double i=_iMaison->calculer(contexte);
+
+	contexte->Houses()[i].r=_color->x();
+	contexte->Houses()[i].g=_color->y();
+	contexte->Houses()[i].b=_color->z();
+
+	return (x()+y()+z());//(color != black) 
 	/*
 		Colors hours in context
 
@@ -247,7 +266,7 @@ double Couleur::calculer(const Contexte& contexte){
 	<< contexte.Houses()[i].g <<","
 	<< contexte.Houses()[i].b <<")";
 
-	return 0; 
+	return (_x+_z+_z); // return (color != black) 
 	/*
 		cout couleur?
 		This return f(r,g,b)
@@ -272,7 +291,7 @@ hexRGB::hexRGB(const std::string & hexcode):
 	_z( (double)std::strtoul(hexcode.substr(5,2),0,16)){}
 
 double hexRGB::calculer(const Contexte& contexte){
-	return 0; 
+	return (_x+_z+_z); // return (color != black)
 	/*
 		You mainly use getters for this class
 		This returns 	the wavelength of light

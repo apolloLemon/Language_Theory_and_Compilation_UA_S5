@@ -41,6 +41,7 @@ public:
 
     Graph& City() {return city;}
     std::vector<House>& Houses(){return houses;}
+    double Occupied(double x,double y,double z) const;
 
     double& get(const std::string & nom);
     const double& get(const std::string & nom) const;

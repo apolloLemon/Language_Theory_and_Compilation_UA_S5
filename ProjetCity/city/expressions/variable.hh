@@ -11,7 +11,7 @@ public:
     Variable(const std::string & nom);
     
     double calculer(const Contexte& contexte) const override;
-
+    std::string str() const {return _nom;}
 
 private:
     std::string _nom;
