@@ -16,6 +16,11 @@ private:
 	std::string _errmsg;
 };
 
+struct coord {
+    double x,y,z;
+};
+
+
 struct House {
     std::string identifier;
     double x, y, z, orientation;
@@ -24,6 +29,7 @@ struct House {
     bool at(double _x,double _y,double _z)const{return (x==_x)&&(y==_y)&&(z==_z);}
     bool id(std::string id)const{return (identifier==id);}
 
+    void place(coord c){x=coord.x;y=coord.y;z=coord.z;}
     void orient(){orientation=orientation%360;}
     void orient(double o){orientation=o%360;}
 }
@@ -31,6 +37,7 @@ struct House {
 class Contexte {
 private:
     std::map<std::string, double> variables;
+    std::vector<coord> graphcoords;
     std::vector<House> houses;
     Graph city;
 public:
@@ -40,6 +47,7 @@ public:
     Contexte(const Contexte & autre) = default;
 
     Graph& City() {return city;}
+    void Citinit(double r);
     std::vector<House>& Houses(){return houses;}
     double Occupied(double x,double y,double z) const;
 

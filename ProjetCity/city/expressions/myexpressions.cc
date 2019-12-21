@@ -13,42 +13,33 @@ double ASTNODE::calculer(const Contexte& contexte){
 }
 	*/
 
+
 RAYON::RAYON(ExpressionPtr rayon):
 _rayon(rayon){}
-
+//Returns the radius of the city
 double RAYON::calculer(const Contexte& contexte){
 	if(_rayon) return _rayon->calculer(contexte);
 	else return 5;
-}
+} //
+
 
 Construire::Construire(ExpressionPtr x,std::vector<ExpressionPtr> y):
 _rayon(x),_statements(y){}
-
+//Inits Graph and launches instructions
 double Construire::calculer(const Contexte& contexte){
-	double rayon=_rayon->calculer(contexte);
-	double lotCount=rayon*6; //hexagonal map
-	//Initialise the Graph to the right size
-	contexte.getCity()->Citinit(lotCount);
-
-	//Execute instructions
-	for(auto sts : _statements) sts->calculer();
-
-	return 0; //success?
+	contexte.Citinit(_rayon->calculer(contexte)); //Initialise the Graph to the right size
+	for(auto sts : _statements) sts->calculer(); //Execute instructions
+	return lotCount; //size of graph
 }
 
 
 COORD::COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z):
 _x(x),_y(y),_z(z){}
-
+//returns house index or -1
 double COORD::calculer(const Contexte& contexte){
-	return contexte.Occupied( x(contexte),y(contexte),z(contexte) );
-	/*for(double i=0; i<contexte.Houses().size();i++)
-		if(contexte.Houses()[i].at(_x,_y,_z))
-			return i;
-	//returns the index of the house, or -1
-	return -1; */
+	return contexte.Occupied( x(contexte),y(contexte),z(contexte) )
 }
-
+//returns distance between this and arg(other)
 double COORD::distance(const COORD & o) {
 	return HexDistance(
 		x(contexte),y(contexte),z(contexte),
@@ -58,26 +49,28 @@ double COORD::distance(const COORD & o) {
 
 NODE::NODE(ExpressionPtr iMaison):
 _iMaison(iMaison){}
-
+//returns house index
 double NODE::calculer(const Contexte& contexte){
 	return iMaison->calculer(contexte); 
 }
 
 Maison::Maison(const std::string& nom):
 _nom(nom){}
-
+//Creates a house node
 double Maison::calculer(const Contexte& contexte){
 	double vc=contexte.City().VertexCount();
 	House  h ={.identifier=_nom};
 
-	if(vc<=contexte.Houses().size()) return 0;
-	if(!_coord) do {
-		h.x=rand()%vc;
-		h.y=rand()%vc;
-		h.z=rand()%vc;
-	} while((x+y+z)%2 		||
-			(x+y+z)>vc*2 	||
-			contexte.Occupied(x,y,z)!=-1
+
+
+	if(vc<=contexte.Houses().size()) return 0; //are there spaces left?
+	if(!_coord) do { // coord pointer null =? get random coord 
+		h.x=(rand()%(vc/6))*(-1*rand()%2); //r = vc/6, -1*randomBool
+		h.y=(rand()%(vc/6))*(-1*rand()%2);
+		h.z=(rand()%(vc/6))*(-1*rand()%2);
+	} while((h.x + h.y + h.z)%2 		|| // distance to 0 must be even
+			(h.x + h.y + h.z)<=vc/3		|| // distance to 0 must be in range
+			contexte.Occupied(x,y,z)!=-1 //space must be unocupied
 			);
 	else {
 		if(_coord->calculer()) return 0;
@@ -277,7 +270,35 @@ Voisin::Voisin(ExpressionPtr iMaison,ExpressionPtr exp):
 _iMaison(iMaison),_exp(exp){}
 
 double Voisin::calculer(const Contexte& contexte){
-	return 0; 
+	double vc=contexte.City().VertexCount();
+	if(vc<=contexte.Houses().size()) return 0; //are there spaces left?
+	
+	double r=_exp->calculer();
+	int spots=r*6;
+	for(int i=0;i<spots;i++){
+
+	}
+
+	House h;
+
+	double ih = _iMaison->calculer();
+	double srcx = contexte.Houses()[ih].x;
+	double srcy = contexte.Houses()[ih].y;
+	double srcz = contexte.Houses()[ih].z;
+
+	do { 
+		h.x=(rand()%r)*(-1*rand()%2);
+		h.y=(rand()%r)*(-1*rand()%2);
+		h.z=(rand()%r)*(-1*rand()%2);
+	} while( i<maxi 					||
+			(h.x + h.y + h.z)%2 		|| // distance to 0 must be even
+			(h.x + h.y + h.z)<vc/3 		|| // distance to 0 must be in range
+			((h.x-srcx) + (h.y-srcy) + (h.z-srcz))<r ||
+			contexte.Occupied(x,y,z)!=-1 //space must be unocupied
+			);
+	if(i==maxi) return 0; //no houses around point
+	contexte.Houses().push_back(h);
+	return 1; 
 	/*
 		Makes house in random location in proximity
 
