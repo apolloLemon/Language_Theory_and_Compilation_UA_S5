@@ -22,22 +22,43 @@ const double& Contexte::operator[](const std::string & nom) const {
 
 void Citinit(double r) {
     if(r==0)return;
-    city.Citinit(r*6);
     
-    graphcoords.push_back({-1,0,1});graphcoords.push_back({-1,1,0});graphcoords.push_back({0,-1,1});graphcoords.push_back({0,1,-1});graphcoords.push_back({1,0,-1});graphcoords.push_back({1,-1,0});
-    for(int l=2;l<=r;l++){
+
+    /*
+        This code is to fill my graphcoords list,
+        because we're representing a hexagonal map.. our coord system is fun
+        x, y, z, on a 2d plane
+        but there are patterns to be found.
+
+        first, the first layer around the central hex has for coordinades 
+        all the permutations of {-1,0,1}. 3! permutations, 6 spots on the first layer, pretty coo'
+        the the next layers can be build from the lower layers ..could maybe of made this recursive
+
+        So the next layer, is just the coord*layer number for all the hex inline with the x y z axis
+        and the sum of the two hexes it "sits in" other wise
+
+        generally, the coord of the new hex, is the sum of the two hexes it touches on the lower layer
+    */
+    int start_layer=2;
+    if(city.vertexCount()==0); //this makes the pattern for the first layer
+        graphcoords.push_back({-1,0,1});graphcoords.push_back({-1,1,0});graphcoords.push_back({0,-1,1});graphcoords.push_back({0,1,-1});graphcoords.push_back({1,0,-1});graphcoords.push_back({1,-1,0});
+    else start_layer = city.vertexCount();
+    for(int l=start_layer;l<=r;l++){ //this starts from first layer pattern to generate the higher layers 
         for(int s=0;s<(l*6);s++){
             if(s%l==0) {
                 coord a = graphcoords[s/l];
-                graphcoords.push_back({a.x*l,a.y*l,a.z*l});    
+                coord b = {a.x*l, a.y*l, a.z*l};
+                graphcoords.push_back(std::pair<coord,bool>(b,0));    
             }else{
-                coord a = graphcoords[s];
-                coord b = graphcoords[(s+1)%((l-1)*6)]
-                graphcoords.push_back({a.x+b.x,a.y+b.y,a.z+b.z})
+                coord a = graphcoords[s%((l-1)*6)]; //this needs testing;
+                coord b = graphcoords[(s+1)%((l-1)*6)];
+                coord c = {a.x+b.x, a.y+b.y, a.z+b.z};
+                graphcoords.push_back(std::pair<coord,bool>(c,0));
             }
         }
-    }
+    } //this is not in it's own function because it's only done here
 
+    city.Citinit(r*6);
 }
 
 bool Contexte::Occupied(double x,double y,double z) const {

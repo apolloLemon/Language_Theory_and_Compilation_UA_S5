@@ -37,7 +37,7 @@ struct House {
 class Contexte {
 private:
     std::map<std::string, double> variables;
-    std::vector<coord> graphcoords;
+    std::vector<std::pair<coord,double>> graphcoords;
     std::vector<House> houses;
     Graph city;
 public:
