@@ -20,9 +20,14 @@ const double& Contexte::operator[](const std::string & nom) const {
     return variables.at(nom);
 }
 
+int radius2hexcount(int r) {
+    if(r==0) return 0;
+    return 6*r + radius2hexcount(r-1);
+}
+
 void Citinit(double r) {
     if(r==0)return;
-    
+    int v = radius2hexcount(r);
 
     /*
         This code is to fill my graphcoords list,
@@ -41,31 +46,56 @@ void Citinit(double r) {
     */
     int start_layer=2;
     if(city.vertexCount()==0); //this makes the pattern for the first layer
-        graphcoords.push_back({-1,0,1});graphcoords.push_back({-1,1,0});graphcoords.push_back({0,-1,1});graphcoords.push_back({0,1,-1});graphcoords.push_back({1,0,-1});graphcoords.push_back({1,-1,0});
+        graphcoords.push_back(std::make_pair(coord {1,-1,0},-1));graphcoords.push_back(std::make_pair(coord {1,0,-1},-1));graphcoords.push_back(std::make_pair(coord {0,1,-1},-1));graphcoords.push_back(std::make_pair(coord {-1,1,0},-1));graphcoords.push_back(std::make_pair(coord {-1,0,1},-1));graphcoords.push_back(std::make_pair(coord {0,-1,1},-1));
     else start_layer = city.vertexCount();
-    for(int l=start_layer;l<=r;l++){ //this starts from first layer pattern to generate the higher layers 
-        for(int s=0;s<(l*6);s++){
-            if(s%l==0) {
-                coord a = graphcoords[s/l];
-                coord b = {a.x*l, a.y*l, a.z*l};
-                graphcoords.push_back(std::pair<coord,bool>(b,0));    
-            }else{
-                coord a = graphcoords[s%((l-1)*6)]; //this needs testing;
-                coord b = graphcoords[(s+1)%((l-1)*6)];
-                coord c = {a.x+b.x, a.y+b.y, a.z+b.z};
-                graphcoords.push_back(std::pair<coord,bool>(c,0));
-            }
-        }
-    } //this is not in it's own function because it's only done here
 
-    city.Citinit(r*6);
+    if(start_layer<r){
+        for(int l=start_layer;l<=r;l++){ //this starts from first layer pattern to generate the higher layers 
+            int lli0 = graphcoords.size()-((l-1)*6); //lower level index, starts at "0" of previous layer;
+            int lli=lli0;
+            for(int s=0;s<(l*6);s++){
+                if(s%l==0) {
+                    coord a = graphcoords[s/l].first;
+                    coord b = {a.x*l, a.y*l, a.z*l};
+                    graphcoords.push_back(std::pair<coord,double>(b,-1));    
+                }else{
+                    coord a = graphcoords[lli].first; //this needs testing;
+                    coord b = graphcoords[(lli+1)%(lli0+((l-1)*6))].first;
+                    coord c = {a.x+b.x, a.y+b.y, a.z+b.z};
+                    graphcoords.push_back(std::pair<coord,double>(c,-1));
+                    lli++;
+                }
+            }
+        } //this is not in it's own function because it's only done here
+    } else {
+        auto b = graphcoords.begin();
+        auto e = graphcoords.begin()+v;
+        auto nv(b,e);
+        graphcoords = nv;
+    }
+    city.Citinit(v);
 }
 
 bool Contexte::Occupied(double x,double y,double z) const {
+    for(auto pair : graphcoords)
+        if(pair.first == coord {x,y,z})
+            return pair.second;
+    throw ExceptionContexte("Contexte::Occupied, Non existant Coord");
+    //at first I used the solution below, but I now generate a vector
+    /*
     for(double i=0; i<Houses().size();i++)
         if(Houses()[i].at(_x,_y,_z))
             return i;
     return -1;
+    */
+}
+
+std::vector<int> UnOccupied() { //returns vector of unoccupied verticies
+    std::vector<int> out;
+    for (int i = 0; i < graphcoords.size(); ++i)
+        if (graphcoords[i].second == -1)
+            out.push_back(i);
+    return out;
 }
 
 ExceptionContexte::ExceptionContexte(std::string errmsg) :

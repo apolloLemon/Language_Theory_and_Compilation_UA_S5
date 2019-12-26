@@ -37,7 +37,7 @@ COORD::COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z):
 _x(x),_y(y),_z(z){}
 //returns house index or -1
 double COORD::calculer(const Contexte& contexte){
-	return contexte.Occupied( x(contexte),y(contexte),z(contexte) )
+	return contexte.Occupied( x(contexte),y(contexte),z(contexte) ); //will throw exception if illegal coord is attempted
 }
 //returns distance between this and arg(other)
 double COORD::distance(const COORD & o) {
@@ -64,19 +64,22 @@ double Maison::calculer(const Contexte& contexte){
 
 
 	if(vc<=contexte.Houses().size()) return 0; //are there spaces left?
-	if(!_coord) do { // coord pointer null =? get random coord 
-		h.x=(rand()%(vc/6))*(-1*rand()%2); //r = vc/6, -1*randomBool
-		h.y=(rand()%(vc/6))*(-1*rand()%2);
-		h.z=(rand()%(vc/6))*(-1*rand()%2);
-	} while((h.x + h.y + h.z)%2 		|| // distance to 0 must be even
-			(h.x + h.y + h.z)<=vc/3		|| // distance to 0 must be in range
-			contexte.Occupied(x,y,z)!=-1 //space must be unocupied
-			);
+	if(!_coord) {
+		auto chooseFrom = contexte.UnOccupied();
+		int choice = chooseFrom[rand()%chooseFrom.size()]; // YAY needed optimisation
+		auto chosen = contexte.GraphCoords()[choice];
+
+		h.x=chosen.first.x; h.y=chosen.first.y; h.z=chosen.first.z;
+		chosen.second = -1;
+	}
 	else {
-		if(_coord->calculer()) return 0;
+		if(_coord->calculer()!=-1) return 0; //will throw exception if illegal coord is attempted
 		h.x=_coord->x(contexte);
 		h.y=_coord->y(contexte);
 		h.z=_coord->z(contexte);
+		for(auto i : contexte.GraphCoords())
+			if(i.first == coord {h.x,h.y,h.z})
+				i.second = -1;
 	}
 
 	contexte.Houses().push_back(h);

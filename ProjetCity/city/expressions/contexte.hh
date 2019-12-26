@@ -18,7 +18,15 @@ private:
 
 struct coord {
     double x,y,z;
+
+    bool operator==(const coord & o){
+        return (x==o.x)
+            && (y==o.y)
+            && (z==o.z)
+    }
 };
+
+int radius2hexcount(int);
 
 
 struct House {
@@ -48,8 +56,12 @@ public:
 
     Graph& City() {return city;}
     void Citinit(double r);
+   
     std::vector<House>& Houses(){return houses;}
+   
+    std::vector<std::pair<coord,double>> & GraphCoords() {return graphcoords;}
     double Occupied(double x,double y,double z) const;
+    std::vector<int> UnOccupied(); //returns vector of unoccupied verticies
 
     double& get(const std::string & nom);
     const double& get(const std::string & nom) const;
