@@ -10,7 +10,7 @@ public:
     Variable(const Variable &) = default;
     Variable(const std::string & nom);
     
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
     std::string str() const {return _nom;}
 
 private:

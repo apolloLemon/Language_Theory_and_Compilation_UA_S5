@@ -5,7 +5,7 @@ ExpressionUnaire::ExpressionUnaire(ExpressionPtr exp, OperateurUnaire op):
 
 }
 
-double ExpressionUnaire::calculer(const Contexte& contexte) const {
+double ExpressionUnaire::calculer(Contexte& contexte) {
     double exp = _exp->calculer(contexte);
     switch (_op) {
         case OperateurUnaire::neg: return -exp;

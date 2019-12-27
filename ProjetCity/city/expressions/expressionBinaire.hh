@@ -18,7 +18,7 @@ public:
     ExpressionBinaire(ExpressionPtr gauche, ExpressionPtr droite, OperateurBinaire op);
     ~ExpressionBinaire() = default;
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _gauche;

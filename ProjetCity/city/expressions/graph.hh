@@ -1,3 +1,5 @@
+#ifndef graph_h
+#define graph_h
 //#include <string>
 //#include <vector>
 //#include <set>
@@ -6,7 +8,6 @@
 #include <limits>
 #include <ostream>
 #include <iostream>
-
 
 class Graph {
 /*
@@ -42,6 +43,8 @@ public:
 	void SetOriented(bool o){oriented=o;}
 	void Arc(int,int,double);
 	void RemoveArc(int,int);
+
+	void RemoveNode(int);
 	/*
 	Information (const)
 	
@@ -54,6 +57,7 @@ public:
 	//Getters
 	int VertexCount() const {return vertexCount;}
 	double Arc(int src,int dst) const {return adjacencyMatrix[src][dst];}
+	bool hasArc(int src,int dst) const {return adjacencyMatrix[src][dst]!=std::numeric_limits<double>::infinity();}
 
 /*
 	//Algorithms
@@ -66,3 +70,5 @@ public:
 //End Of General Graph Stuff
 */
 };
+
+#endif

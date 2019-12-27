@@ -5,7 +5,7 @@
 
 class Expression {
 public:
-    virtual double calculer(const Contexte & contexte) const = 0;
+    virtual double calculer(Contexte & contexte) = 0;
 };
 
 using ExpressionPtr = std::shared_ptr<Expression>;

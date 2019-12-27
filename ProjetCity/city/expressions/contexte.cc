@@ -25,7 +25,7 @@ int radius2hexcount(int r) {
     return 6*r + radius2hexcount(r-1);
 }
 
-void Citinit(double r) {
+void Contexte::Citinit(double r) {
     if(r==0)return;
     int v = radius2hexcount(r);
 
@@ -45,9 +45,9 @@ void Citinit(double r) {
         generally, the coord of the new hex, is the sum of the two hexes it touches on the lower layer
     */
     int start_layer=2;
-    if(city.vertexCount()==0); //this makes the pattern for the first layer
-        graphcoords.push_back(std::make_pair(coord {1,-1,0},-1));graphcoords.push_back(std::make_pair(coord {1,0,-1},-1));graphcoords.push_back(std::make_pair(coord {0,1,-1},-1));graphcoords.push_back(std::make_pair(coord {-1,1,0},-1));graphcoords.push_back(std::make_pair(coord {-1,0,1},-1));graphcoords.push_back(std::make_pair(coord {0,-1,1},-1));
-    else start_layer = city.vertexCount();
+    if(city.VertexCount()==0){ //this makes the pattern for the first layer
+            graphcoords.push_back(std::make_pair(coord {1,-1,0},-1));graphcoords.push_back(std::make_pair(coord {1,0,-1},-1));graphcoords.push_back(std::make_pair(coord {0,1,-1},-1));graphcoords.push_back(std::make_pair(coord {-1,1,0},-1));graphcoords.push_back(std::make_pair(coord {-1,0,1},-1));graphcoords.push_back(std::make_pair(coord {0,-1,1},-1));
+    }else start_layer = city.VertexCount();
 
     if(start_layer<r){
         for(int l=start_layer;l<=r;l++){ //this starts from first layer pattern to generate the higher layers 
@@ -70,13 +70,13 @@ void Citinit(double r) {
     } else {
         auto b = graphcoords.begin();
         auto e = graphcoords.begin()+v;
-        auto nv(b,e);
+        std::vector<std::pair<coord,double>> nv(b,e);
         graphcoords = nv;
     }
-    city.Citinit(v);
+    city.Citinit((unsigned int)v);
 }
 
-bool Contexte::Occupied(double x,double y,double z) const {
+double Contexte::Occupied(double x,double y,double z) const {
     for(auto pair : graphcoords)
         if(pair.first == coord {x,y,z})
             return pair.second;
@@ -90,12 +90,34 @@ bool Contexte::Occupied(double x,double y,double z) const {
     */
 }
 
-std::vector<int> UnOccupied() { //returns vector of unoccupied verticies
+std::vector<int> Contexte::UnOccupied() { //returns vector of unoccupied verticies
     std::vector<int> out;
-    for (int i = 0; i < graphcoords.size(); ++i)
+    for (int i = 0; i < (int)graphcoords.size(); ++i)
         if (graphcoords[i].second == -1)
             out.push_back(i);
     return out;
+}
+
+std::vector<int> Contexte::UnOccupied(int r,coord c) { //returns vector of unoccupied verticies
+    std::vector<int> out;
+    for (int i = 0; i < (int)graphcoords.size(); ++i)
+        if ((graphcoords[i].second == -1)
+            && (graphcoords[i].first.distance(c)<=r)) 
+            out.push_back(i);
+    return out;
+}
+
+void Contexte::UpdateRoads(int n){
+    for(int i=0;i<city.VertexCount();i++){
+        if(city.hasArc(i,n)){
+            double distance=houses[i].pos.distance(houses[n].pos);
+            city.Arc(i,n,distance);
+        }
+        if(city.hasArc(n,i)){
+            double distance=houses[i].pos.distance(houses[n].pos);
+            city.Arc(n,i,distance);
+        }
+    }
 }
 
 ExceptionContexte::ExceptionContexte(std::string errmsg) :

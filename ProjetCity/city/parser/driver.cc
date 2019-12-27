@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-const Contexte& Driver::getContexte() const {
+Contexte& Driver::getContexte() {
     return _variables;
 }
 
@@ -15,5 +15,6 @@ void Driver::setVariable(const std::string & name, double value) {
 }
 
 void Driver::setAST(std::vector<ExpressionPtr> top) {
+	std::cout<<"Driver::setAST\n";
     ast = top;
 }

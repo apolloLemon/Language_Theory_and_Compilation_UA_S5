@@ -1,16 +1,11 @@
+#ifndef myexp_h
+#define myexp_h
+
 #include <string>
 #include "expression.hh"
 #include <vector>
 #include <cstdlib>//rand
-
-
-double HexDistance(double x1,double y1,double z1,double x2,double y2,double z2) {
-    return (
-        x1-x2
-    +   y1-y2
-    +   z1-z2
-        )/2;
-}
+#include <random>
 
 class RAYON : public Expression {
 public:
@@ -21,7 +16,7 @@ public:
 
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _rayon;
@@ -36,7 +31,7 @@ public:
 
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _rayon;
@@ -49,16 +44,16 @@ public:
     COORD(const COORD &) = default;
     COORD(ExpressionPtr x,ExpressionPtr y,ExpressionPtr z);
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
     /*
 		calculer Can be used to check coords for a house
 
 		or just use the getters below 
 	*/
-    double distance(const COORD &) const;
-    ExpressionPtr x(const Contexte& contexte) const {return _x.calculer(contexte);}
-    ExpressionPtr y(const Contexte& contexte) const {return _y.calculer(contexte);}
-    ExpressionPtr z(const Contexte& contexte) const {return _z.calculer(contexte);}
+    double distance(const COORD &, Contexte& contexte) const;
+    double x(Contexte& contexte) const {return _x->calculer(contexte);}
+    double y(Contexte& contexte) const {return _y->calculer(contexte);}
+    double z(Contexte& contexte) const {return _z->calculer(contexte);}
 
 
 private:
@@ -76,7 +71,7 @@ public:
 	for the house
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -88,13 +83,13 @@ public:
     Maison(const Maison &) = default;
     Maison(const std::string &);
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
-    void setCOORD(ExpressionPtr coord) {_coord=coord};
+    void setCOORD(ExpressionPtr coord) {_coord=std::dynamic_pointer_cast<COORD>(coord);}
 
 private:
     std::string _nom;
-    COORD _coord;
+    std::shared_ptr<COORD> _coord;
 };
 
 class IDMaison : public Expression {
@@ -107,7 +102,7 @@ public:
 	<std::string, Maison> map
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     std::string _nom;
@@ -122,7 +117,7 @@ public:
 	
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _src, _dst;
@@ -137,7 +132,7 @@ public:
 	
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -153,7 +148,7 @@ public:
 		
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison, _deg;
@@ -168,10 +163,11 @@ public:
 	
     */
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
-    ExpressionPtr _iMaison, _coord;
+    ExpressionPtr _iMaison;
+    std::shared_ptr<COORD> _coord;
 };
 
 class Detruire : public Expression {
@@ -184,11 +180,11 @@ public:
 			
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
-	bool _maison; //flag for house or road delete, init in constrctr
     ExpressionPtr _src, _dst;
+	bool _maison; //flag for house or road delete, init in constrctr
 };
 
 class Position : public Expression {
@@ -200,7 +196,7 @@ public:
 		cout pos?
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -215,7 +211,7 @@ public:
 		cout deg?
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -230,7 +226,7 @@ public:
 		cout Voisins?
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -245,7 +241,7 @@ public:
 		cout Voisins?
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _idvar, _exp;
@@ -260,10 +256,11 @@ public:
 		
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
-    ExpressionPtr _iMaison, _color;
+    ExpressionPtr _iMaison; 
+    std::shared_ptr<COORD> _color;
 };
 
 class Couleur : public Expression {
@@ -275,7 +272,7 @@ public:
 		cout couleur?
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison;
@@ -290,7 +287,7 @@ public:
 		
 	*/
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _iMaison, _exp;
@@ -313,7 +310,7 @@ public:
     */
 
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
     double x() const {return _x;}
     double y() const {return _y;}
@@ -329,7 +326,7 @@ public:
     Si(const Si &) = default;
     Si(ExpressionPtr exp,std::vector<ExpressionPtr> statements ,std::vector<ExpressionPtr> else_sts);
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _exp;
@@ -340,9 +337,9 @@ class TantQue : public Expression {
 public:
     TantQue() = delete;
     TantQue(const TantQue &) = default;
-    TantQue(ExpressionPtr exp,std::vector<ExpressionPtr> statements ,std::vector<ExpressionPtr> else);
+    TantQue(ExpressionPtr exp,std::vector<ExpressionPtr> statements);
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _exp;
@@ -353,11 +350,13 @@ class Repeter : public Expression {
 public:
     Repeter() = delete;
     Repeter(const Repeter &) = default;
-    Repeter(ExpressionPtr exp,std::vector<ExpressionPtr> statements ,std::vector<ExpressionPtr> else);
+    Repeter(ExpressionPtr exp,std::vector<ExpressionPtr> statements);
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     ExpressionPtr _exp;
     std::vector<ExpressionPtr> _statements;
 };//J'aurrais bien aime' moins me repeter...
+
+#endif

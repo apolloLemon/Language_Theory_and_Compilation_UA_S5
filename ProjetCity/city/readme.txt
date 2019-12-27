@@ -1,15 +1,20 @@
-/////	//////	//////	//////		//		//	//////
-//	//	//		//	//	//	 //		///	   ///	//
-// //	//		//	//	//	 //		////  ////	//
-/////	////	//////	//	 //		//	//	//	////
-//	//	//		//	//	//	 //		//		//	//
-//	//	//		//	//	//	 //		//		//	//
-//	//	//////	//	//	//////		//		//	//////
+README.txt
 
-Il write this first in English, and give it as a translation exercise to my counter part
+I'll write this first in English, and give it as a translation exercise to my counter part
+
+=>	Version 0.999999
+Well this version is bad.. Most of the ideas are there,
+but how I've conceived the AST ain't great
+and my City data structure is disapointing
+
+Why are we handing in this, instead of giving up on a CS degree? I only have pitiful excuses, that I need to deal with myself.. 
+However, I want to do this right. It might be handed in, but I haven't finished working on it. (maybe without the stress I'll enjoy it more)
+
+
 
 =>	Every thing is Expression
 For my AST, pretty much everything is an expression, why so I only have to remember to calculer to get what I need
+But there are dynamic casts, and headaches
 
 =>	Vector of coords, house index pair
 At first my solution (and that of a few of my comerades) was to 

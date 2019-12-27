@@ -8,7 +8,7 @@ public:
     Constante(double valeur);
 
 
-    double calculer(const Contexte& contexte) const override;
+    double calculer(Contexte& contexte) override;
 
 private:
     double _valeur;

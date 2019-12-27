@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <exception>
+#include <vector>
 
 #include "graph.hh"
 
@@ -22,7 +23,14 @@ struct coord {
     bool operator==(const coord & o){
         return (x==o.x)
             && (y==o.y)
-            && (z==o.z)
+            && (z==o.z);
+    }
+    double distance(const coord & o){
+        return (
+            o.x-x
+        +   o.y-y
+        +   o.z-z
+            )/2;
     }
 };
 
@@ -31,16 +39,19 @@ int radius2hexcount(int);
 
 struct House {
     std::string identifier;
-    double x, y, z, orientation;
+    double orientation;
     int r,g,b;
+    coord pos,col;
 
-    bool at(double _x,double _y,double _z)const{return (x==_x)&&(y==_y)&&(z==_z);}
+    bool at(double _x,double _y,double _z)const{return (pos.x==_x)&&(pos.y==_y)&&(pos.z==_z);}
+    bool at(coord o){return pos==o;}
+
     bool id(std::string id)const{return (identifier==id);}
 
-    void place(coord c){x=coord.x;y=coord.y;z=coord.z;}
-    void orient(){orientation=orientation%360;}
-    void orient(double o){orientation=o%360;}
-}
+    void place(coord c){pos=c;}
+    void orient(){orientation=(int)orientation%360;}
+    void orient(double o){orientation=(int)o%360;}
+};
 
 class Contexte {
 private:
@@ -62,11 +73,14 @@ public:
     std::vector<std::pair<coord,double>> & GraphCoords() {return graphcoords;}
     double Occupied(double x,double y,double z) const;
     std::vector<int> UnOccupied(); //returns vector of unoccupied verticies
+    std::vector<int> UnOccupied(int,coord);
 
     double& get(const std::string & nom);
     const double& get(const std::string & nom) const;
     double& operator[](const std::string & nom);
     const double& operator[](const std::string & nom) const;
+
+    void UpdateRoads(int);
 
 };
 

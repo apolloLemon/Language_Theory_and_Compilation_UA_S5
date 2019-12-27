@@ -68,33 +68,27 @@
 %token                  f_void
 
 
-%type <int>             NODE
-%type <ExpressionPtr>   expression 
-%type <ExpressionPtr>   STATEMENT
+%type <ExpressionPtr>   expression
+%type <ExpressionPtr>   STATEMENT function 
+%type <ExpressionPtr>	BASE MANAGE VAR KEVIN CONDLOOP
 
-%type <std::vector<ExpressionPtr>> STATEMENTS
-%type <int>				COORD 
+%type <ExpressionPtr> 	RAYON NODE COORD COLOR
+%type <std::shared_ptr<Maison>> HOUSE
+
+%type <std::vector<ExpressionPtr>> STATEMENTS programme SINON
+%type <int>				HORAIRE
 %left '-' '+' eq ne
 %left '*' '/' inf sup
 %precedence  NEG
 
 %%
 programme:
-    function programme {
-    	$$=$2
-    	$$.push_back($1);
-    }| 
-    %empty {
-    	driver.setAST($$);
-        YYACCEPT;
-    }
+    function programme {}| 
+    %empty {YYACCEPT;}
 
 function:
     Construire RAYON '{' STATEMENTS '}' {
-        $$ = std::make_shared<Construire>($2,$4);    	
-    } |
-    VAR NL {
-    	$$ = std::make_shared<Affect>($1);
+       	driver.ast.push_back(std::make_shared<Construire>($2,$4));    	
     }
 
 RAYON:
@@ -114,11 +108,11 @@ STATEMENTS:
 	%empty {$$=std::vector<ExpressionPtr>();}
 
 STATEMENT:
-	BASE {$$=$1}|
-	MANAGE {$$=$1}|
-	VAR {$$=$1}|
-	KEVIN {$$=$1}|
-	CONDLOOP {$$=$1}|
+	BASE {$$=$1;}|
+	MANAGE {$$=$1;}|
+	VAR {$$=$1;}|
+	KEVIN {$$=$1;}|
+	CONDLOOP {$$=$1;}
 
 
 COORD:
@@ -129,7 +123,7 @@ COORD:
 
 NODE:
 	id_maison {
-		$$ = std::make_shared<NODE>($1);
+		$$ = std::make_shared<NODE>(std::make_shared<IDMaison>($1));
 	} |
 	maison '[' expression ']' {
 		$$ = std::make_shared<NODE>($3);
@@ -143,7 +137,7 @@ BASE:
 		$$=$1;
 	} |
 	HOUSE COORD {
-		$1.setCOORD($2);
+		$1->setCOORD($2);
 		$$=$1;
 	} |
 	Route NODE arrow NODE {
@@ -195,7 +189,7 @@ HORAIRE:
 
 VAR: 
 	id_var '=' expression {
-		$$ = std::make_shared<Affect>($1,$3);
+		$$ = std::make_shared<Affect>(std::make_shared<Variable>($1),$3);
 	} 
 
 KEVIN:
